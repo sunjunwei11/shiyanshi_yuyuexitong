@@ -1,0 +1,30 @@
+.twistyOpen, .twistyClosed {
+        border-left:1px solid white;
+        border-top:1px solid white;
+        border-right: 1px solid #d9d9cd;
+        border-bottom: 1px solid #d9d9cd;
+        cursor:pointer;cursor:hand;
+        font-family: "Lucida Sans Unicode", "Lucida Grande", Helvetica, Arial, sans-serif;
+        font-weight:bold;
+        font-size:100%;
+        padding: 8px 8px 8px 32px;
+        margin-top:3px;
+        margin-bottom: 3px;
+      -webkit-border-radius: 8px;
+      -moz-border-radius: 8px;
+       border-radius: 8px;     
+    }
+    .twistyOpen {
+        background:url("twistyOpen.gif") no-repeat center left;
+        background-color: #f90; color: #fff;border-right: 1px solid #fff;
+    }
+    .twistyClosed {
+        background:url("twistyClosed.gif") no-repeat center left;
+        background-color: #f3f3f3; color: #333;
+    }
+     .twistyClosed:hover {
+        background:url("twistyClosed_hover.gif") no-repeat center left;border-right: 1px solid #fff;
+        background-color: #f90; color: #fff;  
+    }
+    .twistyPanel {
+    padding: 10px 10px 10px 20px;}

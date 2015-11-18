@@ -1,0 +1,204 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>无标题文档</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+.containor {
+	    position:relative;
+		border-color:#000;
+		width:600px;
+		margin-bottom:40px;
+		margin-top:40px;
+		margin-left:0px;
+		margin-right:0px;
+		padding:0px;
+		float:left;
+		right:0px;
+
+}
+.user {
+	    position:absolute;
+		margin-bottom:0px;
+		margin-top:0px;
+		margin-left:0px;
+		margin-right:0px;
+		padding:0px;
+		left:0px;
+}
+
+#huihua { 
+          border:double;
+          border-color:#000;
+		  margin:0px;
+		  padding:0px;
+          background-color:#FFF;
+		  position:relative;
+		  width:600px;
+		  height:400px;
+		  overflow:scroll;
+		  overflow-y:auto;
+		  overflow-x:auto;
+		  white-space:normal;
+		  word-break:normal;
+}
+span {
+}
+body { 
+       position:relative;
+	   margin:0px;
+	   overflow:hidden;
+	   
+		
+}
+</style>
+<link rel="stylesheet" type="text/css" href="/source/jquery.qtip.min.css"/>
+<link href="/source/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css" />
+ 
+<script type="text/javascript" src='/source/jquery-2.0.3.js'></script>
+<script type="text/javascript" src='/source/jquery.qtip.min.js'></script>
+<script type="text/javascript" src='/source/jquery.mCustomScrollbar.js'></script>
+
+<script type="text/javascript">
+	
+$(document).ready(function() {
+	$.format = function (source, params) {
+		if (arguments.length == 1)
+			return function () {
+				var args = $.makeArray(arguments);
+				args.unshift(source);
+				return $.format.apply(this, args);
+				};
+		if (arguments.length > 2 && params.constructor != Array) {
+			params = $.makeArray(arguments).slice(1);
+			}
+			if (params.constructor != Array) {
+				params = [params];
+				}
+				$.each(params, function (i, n) {
+					source = source.replace(new RegExp("\\{" + i + "\\}", "g"), n);
+					});
+					return source;
+	}; //格式化字符串
+	  function bubble(id,title,text){
+		  
+		  var selector=$.format("div[id={0}] > div",id);
+		  var tipSet={
+				overwrite : false,
+				content : {
+					
+					title : '',
+					text : '',
+				},
+				position:{
+					container : $("div[class='containor']"),
+					viewport : false,
+					my : 'left center',
+					at : 'right center',
+				},
+				show : true,
+				hide : false,
+				event : false,
+				style : {
+					classes : 'qtip-jtools', 
+					width :  '160px',
+				},
+			};
+		  tipSet.content.text=text;
+		  tipSet.content.title=title;
+		$(selector).qtip(tipSet);
+	  };
+        socket=new WebSocket("ws://localhost:8080/selfchat");
+		
+ 	
+//		var socket=new WebSocket("ws://localhost:8080/selfchat");//必须在外部创建连接，这样已进入页面就建立连接，剩下的就是直接传输数据了
+	$("input[type='button']").click(socket,function() {
+			var username=''
+			username=$('#username').val();
+			if(username==''){
+				alert('请填入您的姓名！');
+				throw new Object('请填入您的姓名！');
+			}
+        if(socket.readyState){
+			var sendmes='';//定义存储会话文本的变量
+			sendmes=$("textarea").val();//取文本框的内容
+			if(sendmes==''){
+				alert('会话不能为空！');//判断用户是否输入了文字
+				throw new Object('会话不能为空！');//终止程序运行
+			}
+			//取日期
+			var myDate=new Date();//在发送的瞬间创建，Date对象，这样才是当前最准确的时间
+			var year=myDate.getFullYear();
+			var month=myDate.getMonth()+1;
+			var day=myDate.getDate();
+			var time=myDate.getTime();
+			var hour=myDate.getHours();
+			var minute=myDate.getMinutes();
+			var second=myDate.getSeconds();
+			var date=year+'-'+month+'-'+day;
+			var time=hour+':'+minute+':'+second;
+			//alert(newDate);
+			socket.send(username);
+			socket.send(date+'/'+time);
+			socket.send(sendmes);
+			socket.send(date);
+			socket.send(time);
+			
+			$("textarea").val('');//点击发送之后立即清空文本框
+			
+		}
+		else{
+			alert('connecting...');
+		}
+	
+    });
+		var i=0;
+		            $("#huihua").mCustomScrollbar();
+
+		socket.onmessage=function(mes){//这条语句必须放在件点击事件外面，否则除非点击，才能接受到数据，不点击就没法执行到此函数，从而无法接收消息
+		    message=mes.data.split(',');//mes是一个 MessageEvent对象，返回的数据在其data属性中
+			user=message[0];
+			date=message[1];
+			text=message[2];
+//			alert(message);
+            $("#huihua .mCSB_container").append($.format("<div class='containor' id={0}><div class='user'></div></div>",i));//每一个对话元素设置一个唯一的ID,用来查找并为其添加qtip
+			 $("#huihua").mCustomScrollbar("update");	
+
+			$($.format("div[id={0}] > div",i)).text(user);
+			bubble(i,date,text);
+			
+
+		   $("#huihua").mCustomScrollbar("scrollTo","bottom");
+		   	i+=1;
+//			$($.format("div[id={0}]",i)).get(0).scrollIntoView(false);
+		};
+		socket.onclose=function(){
+			i=0;
+		}
+
+
+		  
+
+/*            var i=0;
+			$("#hide").before($.format("<div class='container'><div class='user' id={0}>汉牟田</div></div>",i));
+			bubble(i,'2013年10越1日','我爱你');
+*/			//mes是一个 MessageEvent对象，返回的数据在其data属性中/*####################################################################################*/		
+});
+</script>
+</head>
+
+<body>
+<div>
+请填入姓名：
+<input id='username' type="text"/>
+</div>
+<div id="huihua">
+
+
+</div>
+<textarea>
+</textarea>
+<input type="button" value="发送"/>
+
+</body>
+</html>

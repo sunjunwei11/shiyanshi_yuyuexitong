@@ -1,0 +1,19 @@
+
+#calendar{
+width:189px;
+}
+#calendar th {
+    font-weight:bold;
+    background:#f8f8f8;
+    color:#333;
+    border:none 0;
+}
+
+#calendar thead tr th:first-child {border: 2px #FF9900; -webkit-border-top-left-radius: 0;
+-moz-border-radius-topleft: 0;
+border-top-left-radius: 0;
+border-width: 0;}
+
+#calendar thead tr th:last-child{border: 0 none; -webkit-border-top-right-radius: 0;
+-moz-border-radius-topright: 0;
+border-top-right-radius: 0; border-width: 0;}

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>上水箱对象特性实验预习</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <script src="js/jquery-2.0.3.min.js"></script>
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/sky.css" id="theme">
+		<link rel="stylesheet" href="css/zenburn.css">
+		
+		<script>
+		    //document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+			function getquerystring(name) {
+				var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+				var r = window.location.search.substr(1).match(reg);
+				if (r != null)
+					return decodeURI(r[2]);
+				return null;
+
+			}
+
+			//先取studentid，coursename,subexperimentname通过ajax传到后台
+			
+			%user = session.get("user")
+			var studentid = '{{user["userid"]}}';
+			var studentname='{{user["username"]}}';
+			var couname = getquerystring("couname");
+			//alert(couname)
+			var subname = getquerystring("subname");
+			var sta = true;
+
+			$(function(){
+
+				//alert(studentid)
+				//先做一个检查，如果第一次点击预习，则在processbiao中填预习，不是第一次且预习未完成状态不变，若预习完成则调用存储过程改变状态。
+				$.ajax({
+					url : "/yuxijiancha",
+					type : "POST",
+					dataType : "json",
+					data : {
+						studentid : studentid,
+						studentname:studentname,
+						couname : couname,
+						subname : subname
+					},
+					success : function(data) {
+						if (data["row1"] == "预习") {
+							//alert("继续进行预习")
+							$("#button1").click(function() {
+								if (sta == true) {
+									var stytime = 20;
+									//alert("sta=false")
+									if (stytime < 20) {
+										alert("未达到规定预习时间请继续预习")
+									} else {
+										//alert("准备提交")
+										var action = 0;
+										$.ajax({
+											url : "/yuxibufen",
+											type : "POST",
+											dataType : "json",
+											data : {
+												studentid : studentid,
+												couname : couname,
+												subname : subname,
+												action : action
+											},
+											success : function(data) {
+												alert("完成预习")
+
+											}
+										})
+
+									}
+									//执行ajax
+									sta = false;
+								} else {
+									alert("已完成预习部分")
+								}
+
+							})
+						} else {
+							alert("您已完成预习部分")
+
+						}
+					}
+				})
+
+			})	
+		</script>
+
+	</head>
+	<body>
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+
+				
+				<section>
+					<h1><font size="10px" color="#5C3317">上水箱实验特性介绍</font></h1>
+					
+					<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---实验要求以及内容均来自过程控制实验室</p>
+					
+					
+				</section>
+
+				<section>
+				<h2 align="left"><font color="#999900">实验目的</font></h2>
+						<ul>
+							<li class="fragment"><code>&nbsp;&nbsp;&nbsp;(1)掌握单容水箱的阶跃响应测试的方法，并记录相应液位的响应曲线；</code></li>
+							<li class="fragment">&nbsp;&nbsp;&nbsp;(2)根据实验得到的液位节约响应曲线，用相应的方法确定被测对象的特征参数K，T和传递函数；</li>
+							<li class="fragment">&nbsp;&nbsp;&nbsp;(3)掌握同一控制系统采用不同控制方案的实现过程。</li>
+						</ul>
+				</section>
+
+				<!-- Example of nested vertical slides -->
+				
+					<section>
+						<h2 align="left"><font color="#99FF00">实验设备 </font></h2>
+						<ol>
+							<li class="fragment"><code>过控控制综合型实验设备；</code></li>
+							<li class="fragment">实验室中的两台实验平台都可用。</li>
+							<li class="fragment">PC机。</li>
+						</ol>
+					</section>
+					<section>
+						<h2 align="left"><font color="#00FF00">实验原理</font></h2>
+						<p align="left"><font color="#5C3317">&nbsp;&nbsp;所谓<strong>单容</strong>指<em>只有一个贮蓄容量</em>。自衡是指对象在扰动作用下，其平衡位置被破坏后，不需要操作人员等干预.依                         靠其自身重新恢复平衡的过程。</font></p>
+                                        </section>
+                                        <section>
+                                        
+                                                 <h4 align="left"><font color="#000066">下面所示为上水箱对像特性的实验原理</font></h4>
+                                                 <img src="img/PPT/yl1.jpg" />
+					</section>
+					<section>
+					<section>
+						<h2 align="left"><font color="#003300">实验内容与步骤</font></h2>
+						<p align="left"><font color="#000000">&nbsp;&nbsp;&nbsp;本实验采用上水箱和下水箱串联作为被测对象，实验之前先按照要求将容器与电路连接完好，然后按照如下步骤：</font></p>
+						<ul>
+							<li class="fragment"><code>步骤一：设置变频器频率<font color="#CC0000"><strong>（建议设置30HZ）</strong></font>；</code></li>
+							<li class="fragment"> <code>步骤二：选择实验对象，对于本实验就选择上水箱或者下水箱特性测试实验</code></li>
+							<li class="fragment"><code>步骤三：点击”开始实验“按钮，输入”控制"</code></li>
+							<li class="fragment"><code>步骤四：待系统达到初始稳态后，输入新的”控制输入“</code></li>
+							<li class="fragment"><code>步骤五：在“工艺流程”及“历史曲线”选项卡中观察被控变量的实时值及阶跃曲线</code></li>
+							</ul>
+							</section>
+							<section>
+							<ul>
+		                    <li class="fragment"><code>步骤六：待系统重新达到稳态时，点击“停止实验”按钮</code></li>
+		                    <li class="fragment" ><code>步骤七：点击“生成报告”按钮，生成报告</code></li>
+		                    <li class="fragment"><code>步骤八：用作图法，作图并计算出特征参数，完成实验报告</code></li>
+						</ul>
+						</section>
+					</section>
+					<section>
+						<h2 align="left"><font color="#000066">实验工艺流程</font></h2>
+						<img src="img/PPT/gylc.jpg" />
+					</section>
+				
+
+				<section>
+					<h2 align="left"><font color="#6600FF">实验参考曲线</font></h2>
+					<img src="img/PPT/ckqx.jpg" width="650px" height="280px" />
+					<input type="button" id="button1" style="width: 90px;height: 40px" value="完成预习" />
+				</section>
+	</div>
+
+		</div>
+		
+
+		<script src="js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'page', // default/cube/page/concave/zoom/linear/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'lib/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'lib/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'lib/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'lib/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'lib/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+					
+				]
+			});
+
+		</script>
+
+		
+	</body>
+</html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>session</title>
+<script type="text/javascript" src='./source/jquery-2.0.3.js'></script>
+<script>
+function to_session()
+{
+	var username=$('#username').val();
+	var mima=$('#mima').val();
+	var user_id = $('#user_id').val();
+	alert(username + " " +mima);
+	$.ajax({
+				type:"POST",
+				url:"/get_session",
+				cache:false,
+				dataType:"json",
+				data:{username:username,mima:mima,user_id:user_id},//jia d 
+				success:function(htmx){
+				  //$('body').append(htmx);
+				  if(htmx.fistName=="true"){
+				      window.location.href="/liaotianui";
+				  }
+				},
+			});
+				
+}
+</script>
+<script>
+window.onbeforeunload = function(){
+    if(confirm("是否关闭")){
+        return true;
+    }
+    return false;
+　　}
+</script>
+</head>
+
+<body>
+<div id="huihuaheader">
+    姓名：
+    <input id="username" type="text" />
+    密码:
+    <input id="mima" type="text" />     
+    学号:
+    <input id="user_id" type="text" /> 
+    <button onClick=to_session()>登陆</button>
+</div>
+</body>
+</html>

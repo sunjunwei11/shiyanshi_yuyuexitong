@@ -1,0 +1,224 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+<link rel="stylesheet" type="text/css" href="qtip/jquery.qtip.min.css"/>
+<script type="text/javascript" src='qtip/jquery-2.0.3.js'></script>
+<script type="text/javascript" src='qtip/jquery.qtip.min.js'></script>
+<script>
+$(document).ready(function(){
+	document.getElementById("zaixian_number").innerHTML=3;
+	document.getElementById("zongrenshu").innerHTML=10;
+	$('a[title]').qtip();
+	//$("#qtip-test[title]").qitp();
+	$('.qtiptest').qtip({				
+        content: {								
+		    text: 'My content'
+     },
+	 position:{
+			my : 'left center',
+			at : 'right center',
+			//target: 'mouse',
+	},
+	show : true,
+	hide : false,
+    });
+	/*$("#qtip-test").qitp({
+				overwrite : false,
+				content : {
+					
+					title : 'sdfs',
+					text : 'sdfsdf',
+				},
+				position:{
+					container : $("div[class='containor']"),
+					viewport :true,
+					my : 'top left',
+					at : 'bottom right',
+				},
+				show : true,
+				hide : false,
+				event : false,
+				style : {
+					classes : 'qtip-blue', 
+					width :  '200px',
+				},
+			});*/
+});
+</script>
+<style>
+#all {
+	width:650px;
+	position:relative;
+	top:50px;
+	left:50px;
+	background-image:url(whut4.png);
+	}
+#top {
+	width:650px;
+	height:100px;
+	border:double #6F9;
+	background-color:#47A083;
+	position:relative;
+	/*background: -webkit-linear-gradient(top,rgba(204,204,204,0.5),rgba(51,153,51,0.5));
+	background: -moz-linear-gradient(left,#096,#096);
+	background: linear-gradient(left,#096,#096);
+	background: -o-linear-gradient(left,#096,#096);*/
+	} 
+#guanbi {
+	position:absolute;
+	top:0px;
+	left:610px;
+	background-color:rgba(255,255,255,0);
+	border-style:none;
+	color:#FFF;
+	}
+#guanbi:hover {
+	background-color:rgb(255,0,0);
+	color:rgb(0,102,102);
+	}
+#guanbi:active {
+	color:#CCC;
+	box-shadow: 0 1px 3px #4d7254 inset,0 3px 0 #096;
+    background: -webkit-linear-gradient(top,#5eac6e,#72b37e);
+    background: -moz-linear-gradient(top,#5eac6e,#72b37e);
+    background: linear-gradient(top,#5eac6e,#72b37e);
+    background: -o-linear-gradient(top,#5eac6e,#72b37e);
+	}
+#bottom {
+	width:650px;
+	height:600px;
+	border-style:double double double double;
+	border-color:#6F9;
+	}
+#left {
+	float:left;
+	width:500px;
+	height:600px;
+	border-style:none double none none;
+	border-color:#6F9;
+	/*background: -webkit-linear-gradient(left,rgba(102,255,153,0.3),rgba(102,255,204,0.3));*/
+	}
+#right{
+	float:right;
+	width:146px;
+	height:600px;
+	background-color:#53A78B;
+	/*background: -webkit-linear-gradient(left,#9C9,#C6EABB);
+	background: -moz-linear-gradient(left,#9C9,#C6EABB);
+    background: linear-gradient(left,#9C9,#C6EABB);
+	background: -o-linear-gradient(left,#9C9,#C6EABB);*/
+	}
+#shang {
+	width:500px;
+	height:480px;
+	border-style:none none double none;	
+	border-color:#6F9;
+	overflow:scroll;
+	overflow-y:auto;
+	overflow-x:auto;
+	white-space:normal;
+	word-break:normal;
+	}
+#xia {
+	position:relative;
+	width:500px;
+	height:120px;
+	background: -webkit-linear-gradient(left,rgba(92, 160, 123, 0.5),rgb(40, 173, 124));
+	background: -moz-linear-gradient(left,rgba(92, 160, 123, 0.5),rgb(40, 173, 124));
+    background: linear-gradient(left,rgba(92, 160, 123, 0.5),rgb(40, 173, 124));
+	background: -o-linear-gradient(left,rgba(92, 160, 123, 0.5),rgb(40, 173, 124));
+    }
+#textarea {
+	width:496px;
+	height:83px;
+	border-style:none none none none ;
+	border-color:#D3E4DD;
+	background: -webkit-linear-gradient(top,rgba(251, 251, 251,1),rgba(251, 251, 251,1));
+	background: -moz-linear-gradient(top,rgba(251, 251, 251,1),rgba(251, 251, 251,1));
+    background: linear-gradient(top,rgba(251, 251, 251,1),rgba(251, 251, 251,1));
+	background: -o-linear-gradient(top,rgba(251, 251, 251,1),rgba(251, 251, 251,1));
+	}
+#textarea:focus {
+	outline:none;
+	}
+.button{
+width: 60px;
+line-height: 20px;
+text-align: center;
+font-weight: bold;
+color:#1B441B;
+border-radius: 5px;
+margin:0px 0px 0px 0px;
+position:absolute;
+top:90px;
+left:436px;
+overflow: hidden;
+}
+.button.green{
+border:1px solid #64c878;
+box-shadow: 0 1px 2px #b9ecc4 inset,0 -1px 0 #6c9f76 inset,0 -2px 3px #b9ecc4 inset;
+background: -webkit-linear-gradient(top,#90dfa2,#84d494);
+background: -moz-linear-gradient(top,#90dfa2,#84d494);
+background: linear-gradient(top,#90dfa2,#84d494);
+background: -o-linear-gradient(top,#90dfa2,#84d494);
+}
+.green:hover{
+background: -webkit-linear-gradient(top,#aaebb9,#82d392);
+background: -moz-linear-gradient(top,#aaebb9,#82d392);
+background: linear-gradient(top,#aaebb9,#82d392);
+background: -o-linear-gradient(top,#aaebb9,#82d392);
+}
+.green:active{
+box-shadow: 0 1px 3px #4d7254 inset,0 3px 0 #fff;
+background: -webkit-linear-gradient(top,#5eac6e,#72b37e);
+background: -moz-linear-gradient(top,#5eac6e,#72b37e);
+background: linear-gradient(top,#5eac6e,#72b37e);
+background: -o-linear-gradient(top,#5eac6e,#72b37e);
+}
+li {
+	color:rgba(90, 101, 113, 0.74);
+	margin-bottom:5px;
+	}
+</style>
+</head>
+<body>
+<div id = "all">
+     <div id = "top">
+         <p style = "text-align:center; font-size:30px; color:#383467; margin:0px; padding:10px; text-shadow:5px 0px 5px #FFFFFF;font-family:'Lucida Sans Unicode', 'Lucida Grande', sans-serif">自动化实验室</p>
+         <p style= "text-align:center;font-size:12px;margin:0px; padding:0px,0px,0px,0px;color:#383467; text-shadow:2px 0px 2px #FFFFFF;">上水箱实验讨论组</p>
+         <button id= "guanbi" type="button" >关闭</button>
+         <div style = "position:absolute; top:0;left:480px;background-color:rgba(0,0,0,0); visibility:hidden;">
+              <!--%username = session.get("user")["username"]
+              %userid = session.get("user")["userid"]
+              %password = session.get("user")["password"]-->
+              <input id="username" class = "username" type="text" value = "叶良辰" style = "background-color:rgba(0,0,0,0); width:100px; border:none;" />
+              <input id="userid" class = "userid" type="text" value = "1049721403675" style = "background-color:rgba(0,0,0,0);width:100px; border:none;"/>
+              <input id="mima" class = "username" type="text" value = "123456" style = "background-color:rgba(0,0,0,0);width:100px; border:none;"/>
+         </div>
+     </div>
+     <div id = "bottom">
+          <div id = "left">
+               <div id = "shang">
+                     <div class="qtiptest"  style = "width:100px;height:35px;background-color:#3F6; padding:5px;margin:20px" >测试qtip</div>
+                     <a href="#test" title="My tooltip text">Sample link</a>
+               </div>
+               <div id = "xia">
+               <textarea id = "textarea" autofocus></textarea>
+               <button type="button" class="button green">发送</button>
+               </div>
+          </div>
+          <div id = "right">
+          <p style = "text-align:center">讨论组成员(<span id="zaixian_number">1</span>/<span id="zongrenshu">4</span>)</p>
+          <ul>
+              <li>叶良辰</li>
+              <li style = "color:rgb(249, 0, 0);">赵日天</li>
+              <li>小猪</li>
+              <li>欧阳娣娣</li>
+          </ul>
+          </div>
+     </div>
+</div>
+</body>
+</html>

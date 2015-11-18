@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>史密斯预估实验预习</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <script src="js/jquery-2.0.3.min.js"></script>
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/beige.css">
+		<link rel="stylesheet" href="css/zenburn.css">
+		<script>
+		document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+			function getquerystring(name) {
+				var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+				var r = window.location.search.substr(1).match(reg);
+				if (r != null)
+					return decodeURI(r[2]);
+				return null;
+
+			}
+
+			//先取studentid，coursename,subexperimentname通过ajax传到后台
+			
+			%user = session.get("user")
+			var studentid = '{{user["userid"]}}';
+			var studentname='{{user["username"]}}'
+			var couname = getquerystring("couname");
+			var subname = getquerystring("subname");
+			var sta = true;
+
+			$(function() {
+
+				//alert(studentid)
+				//先做一个检查，如果第一次点击预习，则在processbiao中填预习，不是第一次且预习未完成状态不变，若预习完成则调用存储过程改变状态。
+				$.ajax({
+					url : "/yuxijiancha",
+					type : "POST",
+					dataType : "json",
+					data : {
+						studentid : studentid,
+						studentname:studentname,
+						couname : couname,
+						subname : subname
+					},
+					success : function(data) {
+						if (data["row1"] == "预习") {
+							//alert("继续进行预习")
+							$("#button1").click(function() {
+								if (sta == true) {
+									var stytime = 20;
+									//alert("sta=false")
+									if (stytime < 20) {
+										alert("未达到规定预习时间请继续预习")
+									} else {
+										//alert("准备提交")
+										var action = 0;
+										$.ajax({
+											url : "/yuxibufen",
+											type : "POST",
+											dataType : "json",
+											data : {
+												studentid : studentid,
+												couname : couname,
+												subname : subname,
+												action : action
+											},
+											success : function(data) {
+												alert("成功提交")
+
+											}
+										})
+
+									}
+									//执行ajax
+									sta = false;
+								} else {
+									alert("已完成预习部分")
+								}
+
+							})
+						} else {
+							alert("您已完成预习部分")
+
+						}
+					}
+				})
+
+			})
+			
+		</script>
+
+	</head>
+	<body>
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+
+				
+				<section>
+					<h1><font color="#8F8FBD ">史密斯预估实验介绍</font></h1>
+					
+					<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---实验要求以及内容均来自过程控制实验室</p>
+					
+				</section>
+				<section>
+				<h2>实验目的</h2>
+						<ol>
+							<li class="fragment"><code>进一步认识滞后的形成，及其对系统动态性能的影响。</code></li>
+							<li class="fragment">.掌握纯滞后控制系统用常规PID调节器的参数整定方法。</li>
+						</ol>
+				</section>
+				<section>
+				<h2>滞后控制系统实验介绍</h2>
+
+<p align="left">&nbsp;&nbsp;&nbsp;&nbsp;在工业生产过程中，有不少被控对象除了具有容积迟延外，往往不同程度地存在着纯滞后，其特点是当控制作用产生后，在时延τ范围内，被控参数完全没有响应。因此，这样的过程必然会产生较明显的超调量和较长的调节时间，所以，具有纯迟延的过程是较难控制的过程，其难控制随着纯迟延τ占整个过程动态的份额的增加而增加，而路径的长度和物流的速度是构成纯滞后τ的因素。解决纯滞后问题的方法非常多，经过仔细个别的调整，在控制要求不太苛刻的情况下，满足生产过程的要求。本次就是采用这种控制方法进行实验。</p>
+				</section>
+				<section>
+				<h2>工艺流程</h2>
+				<img src="img/PPT/gylc.jpg" />
+				</section>
+				<section>
+					<section>
+						<h2>实验内容与步骤</h2>
+						<p><font color="#000000">&nbsp;&nbsp;&nbsp;本实验采用上水箱和下水箱串联作为被测对象，实验之前先按照要求将容器与电路连接完好，然后按照如下步骤：</font></p>
+						<ul>
+							<li class="fragment"><code>步骤一：设置变频器频率<font color="red">（建议设置30HZ）</font>；</code></li>
+							<li class="fragment"> <code>步骤二：选择实验对象，对于本实验就选择史密斯预估实验</code></li>
+							<li class="fragment"><code>步骤三：点击”开始实验“按钮，输入”控制"</code></li>
+							<li class="fragment"><code>步骤四：待系统达到初始稳态后，输入新的”控制输入“</code></li>
+							<li class="fragment"><code>步骤五：在“工艺流程”及“历史曲线”选项卡中观察被控变量的实时值及阶跃曲线</code></li>
+							</ul>
+							</section>
+							<section>
+							<ul>
+		                    <li class="fragment"><code>步骤六：待系统重新达到稳态时，点击“停止实验”按钮</code></li>
+		                    <li class="fragment" ><code>步骤七：点击“生成报告”按钮，生成报告</code></li>
+		                    <li class="fragment"><code>步骤八：用作图法，作图并计算出特征参数，完成实验报告</code></li>
+						</ul>
+						</section>
+					</section>
+					<section>
+						<h2>实验工艺流程</h2>
+						<img src="img/PPT/gylc.jpg" />
+					</section>
+				
+
+				<section>
+					<h2>实验参考曲线</h2>
+					<p>----具体参见实验课上老师给出的参考曲线</p>
+					<input type="button" id="button1" style="width: 90px;height: 40px" value="完成预习" />
+				</section>
+</div>
+
+		</div>
+
+		
+		<script src="js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'cube', // default/cube/page/concave/zoom/linear/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'lib/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'lib/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'lib/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'lib/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'lib/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+					
+				]
+			});
+
+		</script>
+	</body>
+</html>

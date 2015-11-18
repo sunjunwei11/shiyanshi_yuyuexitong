@@ -1,0 +1,264 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>过程控制实验室首页</title>
+
+<link href="themes/default/style.css" rel="stylesheet" type="text/css" media="screen"/>
+<link href="themes/css/core.css" rel="stylesheet" type="text/css" media="screen"/>
+<link href="themes/css/print.css" rel="stylesheet" type="text/css" media="print"/>
+<link href="uploadify/css/uploadify.css" rel="stylesheet" type="text/css" media="screen"/>
+<link href="themes/css/ieHack.css" rel="stylesheet" type="text/css" media="screen"/>
+
+<!--[if lte IE 9]>
+<script src="js/speedup.js" type="text/javascript"></script>
+<![endif]-->
+
+<script src="js/jquery-1.7.2.js" type="text/javascript"></script>
+<script src="js/jquery.cookie.js" type="text/javascript"></script>
+<script src="js/jquery.validate.js" type="text/javascript"></script>
+<script src="js/jquery.bgiframe.js" type="text/javascript"></script>
+<script src="xheditor/xheditor-1.2.1.min.js" type="text/javascript"></script>
+<script src="xheditor/xheditor_lang/zh-cn.js" type="text/javascript"></script>
+<script src="uploadify/scripts/jquery.uploadify.js" type="text/javascript"></script>
+
+<!-- svg图表  supports Firefox 3.0+, Safari 3.0+, Chrome 5.0+, Opera 9.5+ and Internet Explorer 6.0+ -->
+<script type="text/javascript" src="chart/raphael.js"></script>
+<script type="text/javascript" src="chart/g.raphael.js"></script>
+<script type="text/javascript" src="chart/g.bar.js"></script>
+<script type="text/javascript" src="chart/g.line.js"></script>
+<script type="text/javascript" src="chart/g.pie.js"></script>
+<script type="text/javascript" src="chart/g.dot.js"></script>
+
+<script src="js/dwz.core.js" type="text/javascript"></script>
+<script src="js/dwz.util.date.js" type="text/javascript"></script>
+<script src="js/dwz.validate.method.js" type="text/javascript"></script>
+<script src="js/dwz.regional.zh.js" type="text/javascript"></script>
+<script src="js/dwz.barDrag.js" type="text/javascript"></script>
+<script src="js/dwz.drag.js" type="text/javascript"></script>
+<script src="js/dwz.tree.js" type="text/javascript"></script>
+<script src="js/dwz.accordion.js" type="text/javascript"></script>
+<script src="js/dwz.ui.js" type="text/javascript"></script>
+<script src="js/dwz.theme.js" type="text/javascript"></script>
+<script src="js/dwz.switchEnv.js" type="text/javascript"></script>
+<script src="js/dwz.alertMsg.js" type="text/javascript"></script>
+<script src="js/dwz.contextmenu.js" type="text/javascript"></script>
+<script src="js/dwz.navTab.js" type="text/javascript"></script>
+<script src="js/dwz.tab.js" type="text/javascript"></script>
+<script src="js/dwz.resize.js" type="text/javascript"></script>
+<script src="js/dwz.dialog.js" type="text/javascript"></script>
+<script src="js/dwz.dialogDrag.js" type="text/javascript"></script>
+<script src="js/dwz.sortDrag.js" type="text/javascript"></script>
+<script src="js/dwz.cssTable.js" type="text/javascript"></script>
+<script src="js/dwz.stable.js" type="text/javascript"></script>
+<script src="js/dwz.taskBar.js" type="text/javascript"></script>
+<script src="js/dwz.ajax.js" type="text/javascript"></script>
+<script src="js/dwz.pagination.js" type="text/javascript"></script>
+<script src="js/dwz.database.js" type="text/javascript"></script>
+<script src="js/dwz.datepicker.js" type="text/javascript"></script>
+<script src="js/dwz.effects.js" type="text/javascript"></script>
+<script src="js/dwz.panel.js" type="text/javascript"></script>
+<script src="js/dwz.checkbox.js" type="text/javascript"></script>
+<script src="js/dwz.history.js" type="text/javascript"></script>
+<script src="js/dwz.combox.js" type="text/javascript"></script>
+<script src="js/dwz.print.js" type="text/javascript"></script>
+<!--
+<script src="bin/dwz.min.js" type="text/javascript"></script>
+-->
+<script src="js/dwz.regional.zh.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+$(function(){
+	DWZ.init("dwz.frag.xml", {
+		loginUrl:"login_dialog.html", loginTitle:"登录",	// 弹出登录对话框
+//		loginUrl:"login.html",	// 跳到登录页面
+		statusCode:{ok:200, error:300, timeout:301}, //【可选】
+		pageInfo:{pageNum:"pageNum", numPerPage:"numPerPage", orderField:"orderField", orderDirection:"orderDirection"}, //【可选】
+		debug:true,	// 调试模式 【true|false】
+		callback:function(){
+			initEnv();
+			$("#themeList").theme({themeBase:"themes"}); // themeBase 相对于index页面的主题base路径
+		}
+	});
+});
+
+</script>
+<script type="text/javascript">
+function load()
+{
+document.getElementById("sun").click();
+}
+</script>
+</head>
+
+<body scroll="no">
+	<div id="layout">
+		<div id="header">
+			<div class="headerNav">
+			<img src="uploadify/img/logo.png" width="50" height="50" style=" position:absolute;top:4%;left:5%;"/>
+			<span style="color:#ddd; margin-left: 120px;position:relative;top:20px;font-size:20px">武汉理工大学过程控制实验室</span>
+			   
+				<ul class="nav">
+					<li style="color:#ddd">你好：王同学！</li>
+					<li><a href="login.html">退出</a></li>
+				</ul>
+				<ul class="themeList" id="themeList">
+					<li theme="default"><div class="selected">蓝色</div></li>
+					<li theme="green"><div>绿色</div></li>
+					<!--<li theme="red"><div>红色</div></li>-->
+					<li theme="purple"><div>紫色</div></li>
+					<li theme="silver"><div>银色</div></li>
+					<li theme="azure"><div>天蓝</div></li>
+				</ul>
+			</div>
+
+			<!-- navMenu -->
+			
+		</div>
+
+		<div id="leftside">
+			<div id="sidebar_s">
+				<div class="collapse">
+					<div class="toggleCollapse"><div></div></div>
+				</div>
+			</div>
+			<div id="sidebar">
+				<div class="toggleCollapse"><h2>实验列表</h2><div>收缩</div></div>
+
+				<div class="accordion" fillSpace="sidebar">
+					<div class="accordionHeader">
+						<h2><span>Folder</span>过程控制实验</h2>
+					</div>
+					<div class="accordionContent">
+						<ul class="tree treeFolder">
+							<li><a href="tabsPage.html" target="navTab">对象特性实验</a>
+								<ul>
+									<li><a href="login.html" id="jun" target="navTab" rel="external" external="true">预习ppt</a></li>
+									<li><a href="demo_page2.html" target="navTab" rel="external" external="true">测试</a></li>
+									<li><a href="demo_page1.html" target="navTab" rel="page1" fresh="false">预约</a></li>
+                                    <li><a>实验讨论</a>
+                                        <ul>
+									       <li><a href="http://localhost:8080/btl_chat_group_upd9.html" id="sun" target="navTab" rel="page2" fresh="true" external="true">群聊</a></li>
+
+                                           <li><a href="http://localhost:8080/si liao Copy of btl_chat_group_upd9.html" id="wei" target="navTab" rel="page3" fresh="true" external="true">私聊</a></li>
+
+                                           <li><a href="http://localhost:8080/Copy of ret_group1_upd5.html" target="navTab" rel="page5" external="true">实验一讨论组</a></li>
+                                         </ul>   
+                                         
+                                     </li>
+									<li><a href="demo_page4.html" target="navTab" rel="page3" title="页面三（自定义标签名）">实验问卷调查</a></li>
+									
+								</ul>
+							</li>
+							
+							<li><a>单回路实验</a>
+								<ul>
+									<li><a href="w_panel.html" target="navTab" rel="w_panel">面板</a></li>
+									<li><a href="w_tabs.html" target="navTab" rel="w_tabs">选项卡面板</a></li>
+									<li><a href="w_dialog.html" target="navTab" rel="w_dialog">弹出窗口</a></li>
+									<li><a href="w_alert.html" target="navTab" rel="w_alert">提示窗口</a></li>
+									<li><a href="w_list.html" target="navTab" rel="w_list">CSS表格容器</a></li>
+									<li><a href="demo_page1.html" target="navTab" rel="w_table">表格容器</a></li>
+									<li><a href="w_removeSelected.html" target="navTab" rel="w_table">表格数据库排序+批量删除</a></li>
+									<li><a href="w_tree.html" target="navTab" rel="w_tree">树形菜单</a></li>
+									<li><a href="w_accordion.html" target="navTab" rel="w_accordion">滑动菜单</a></li>
+									<li><a href="w_editor.html" target="navTab" rel="w_editor">编辑器</a></li>
+									<li><a href="w_datepicker.html" target="navTab" rel="w_datepicker">日期控件</a></li>
+									<li><a href="demo/database/db_widget.html" target="navTab" rel="db">suggest+lookup+主从结构</a></li>
+									<li><a href="demo/database/treeBringBack.html" target="navTab" rel="db">tree查找带回</a></li>
+									<li><a href="demo/sortDrag/1.html" target="navTab" rel="sortDrag">单个sortDrag示例</a></li>
+									<li><a href="demo/sortDrag/2.html" target="navTab" rel="sortDrag">多个sortDrag示例</a></li>
+								</ul>
+							</li>
+									
+							<li><a>串级控制实验</a>
+								<ul>
+									<li><a href="#" target="navTab" rel="w_validation">表单验证</a></li>
+									
+									<li><a href="w_uploadify.html" target="navTab" rel="w_uploadify">uploadify多文件上传</a></li>
+								</ul>
+							</li>
+							<li><a>史密斯预估实验</a>
+								<ul>
+									<li><a href="#" target="navTab" rel="pagination1">局部刷新分页1</a></li>
+									<li><a href="#" target="navTab" rel="pagination2">局部刷新分页2</a></li>
+								</ul>
+							</li>
+							<!--<li><a>图表</a>
+								<ul>
+									<li><a href="chart/test/barchart.html" target="navTab" rel="chart">柱状图(垂直)</a></li>
+									<li><a href="chart/test/hbarchart.html" target="navTab" rel="chart">柱状图(水平)</a></li>
+									<li><a href="chart/test/linechart.html" target="navTab" rel="chart">折线图</a></li>
+									<li><a href="chart/test/linechart2.html" target="navTab" rel="chart">曲线图</a></li>
+									<li><a href="chart/test/linechart3.html" target="navTab" rel="chart">曲线图(自定义X坐标)</a></li>
+									<li><a href="chart/test/piechart.html" target="navTab" rel="chart">饼图</a></li>
+								</ul>
+							</li>
+						 <li><a href="dwz.frag.xml" target="navTab" external="true">dwz.frag.xml</a></li>-->
+						</ul>
+					</div>
+					<div class="accordionHeader">
+						<h2><span>Folder</span>单片机实验</h2>
+					</div>
+					<div class="accordionContent">
+						<ul class="tree treeFolder treeCheck">
+							<li><a href="demo_page1.html" target="navTab" rel="demo_page1">#</a></li>
+							
+								
+					</div>
+					<div class="accordionHeader">
+						<h2><span>Folder</span>PLC程序实验</h2>
+					</div>
+					<div class="accordionContent">
+						<ul class="tree">
+							<li><a href="newPage1.html" target="dialog" rel="dlg_page">#</a></li>
+							<li><a href="newPage1.html" target="dialog" rel="dlg_page2">#</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="container">
+			<div id="navTab" class="tabsPage">
+				<div class="tabsPageHeader">
+					<div class="tabsPageHeaderContent"><!-- 显示左右控制时添加 class="tabsPageHeaderMargin" -->
+						<ul class="navTab-tab">
+							<li tabid="main" class="main"><a href="javascript:;"><span><span class="home_icon">实验主页</span></span></a></li>
+						</ul>
+					</div>
+					<div class="tabsLeft">left</div><!-- 禁用只需要添加一个样式 class="tabsLeft tabsLeftDisabled" -->
+					<div class="tabsRight">right</div><!-- 禁用只需要添加一个样式 class="tabsRight tabsRightDisabled" -->
+					<div class="tabsMore">more</div>
+				</div>
+				<ul class="tabsMoreList">
+					<li><a href="javascript:;">实验主页</a></li>
+				</ul>
+				<div class="navTab-panel tabsPageContent layoutBox">
+					<div class="page unitBox">
+						<div class="accountInfo">
+							<div class="alertInfo">
+								<h2><a href="doc/dwz-user-guide.pdf" target="_blank">DWZ框架使用手册(PDF)</a></h2>
+								<a href="doc/dwz-user-guide.swf" target="_blank">DWZ框架演示视频</a>
+							</div>
+							<div class="right">
+								<p><a href="doc/dwz-user-guide.zip" target="_blank" style="line-height:19px">DWZ框架使用手册(CHM)</a></p>
+								<p><a href="doc/dwz-ajax-develop.swf" target="_blank" style="line-height:19px">DWZ框架Ajax开发视频教材</a></p>
+							</div>
+							<p><span>DWZ富客户端框架</span></p>
+							<p>DWZ官方微博:<a href="http://weibo.com/dwzui" target="_blank">http://weibo.com/dwzui</a></p>
+						</div>
+						
+					</div>
+					
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<div id="footer">Copyright &copy; 武汉理工大学</div>
+
+
+
+</body>
+</html>
