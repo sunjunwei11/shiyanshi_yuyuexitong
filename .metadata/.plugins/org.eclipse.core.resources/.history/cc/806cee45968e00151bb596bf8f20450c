@@ -1069,7 +1069,6 @@ def choose(db):
                                     print "有websocket意外断掉",e
                         
                         else:
-                            Usersgroup_shiyan_date[shiyan][student_group]=mes_body["date"]+" "+mes_body["startTime"]
                             Usersid_group_inf[student_group] = []
                             Usersname_group_inf[student_group] = []
                             Users_init[student_group] = []  
@@ -1119,7 +1118,6 @@ def choose(db):
                                     print "有websocket意外断掉",e
                         
                         else:
-                            Usersgroup_shiyan_date[shiyan][student_group]=mes_body["date"]+" "+mes_body["startTime"]
                             Usersid_group_inf[student_group] = []
                             Usersname_group_inf[student_group] = []
                             Users_init[student_group] = []  
@@ -1226,7 +1224,7 @@ def delete(db):
     xiakeTime=request.POST.get('endTime')
     print xiakeTime
     print startTime
-    state="测试完成"
+    state="预习完成"
     cr=db.cursor()
     cr.execute('''SELECT DISTINCT stu_name FROM groupinf WHERE stu_id=%(studentid)s''',{"studentid":studentid})
     studentname = cr.fetchall()[0][0]
@@ -1840,7 +1838,7 @@ def questionnaire1():
 def questions(db):
     typefor=request.POST.get('type')
     cr=db.cursor()
-    cr.execute("SELECT Name FROM itembank WHERE questiontype=%(typefor)s",{"typefor":typefor})
+    cr.execute("SELECT Name FROM itembank WHERE questiontype=%s",(typefor))
     rows=cr.fetchall()
     cr.close()
     
@@ -1864,7 +1862,7 @@ def saveanswer(db):
     diaocha=dict(tp)
     state="已完成"
     cr=db.cursor()
-    cr.execute("INSERT INTO questionnairestate(userid,state) VALUES (%s,%s)",(userid,state))
+    cr.execute("INSERT INTO questionnaireState(userid,state) VALUES (%s,%s)",(userid,state))
     sql='''INSERT INTO anwsers(userid,anwserfor,question1,question2,question3,question4,question5,question6,question7,question8,question9,question10,time) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,NOW())'''
     try:
         cr.execute(sql,(userid,diaocha["type"],diaocha["0"],diaocha["1"],diaocha["2"],diaocha["3"],diaocha["4"],diaocha["5"],diaocha["6"],diaocha["7"],diaocha["8"],diaocha["9"]))
@@ -1886,7 +1884,7 @@ def testingquestions(db):
     subname=request.POST.get("subname")
     print subname
     cr=db.cursor()
-    cr.execute("SELECT question,optionA,optionB,optionC,optionD FROM testingquestions WHERE experiment=%(subname)s",{"subname":subname})
+    cr.execute("SELECT question,optionA,optionB,optionC,optionD FROM testingquestions WHERE experiment=%s",(subname))
     rows=cr.fetchall()
     cr.close()
     data=list(rows)
@@ -1952,7 +1950,7 @@ def getscore(db):
     correct=[]
     #userid="88"
     cr=db.cursor()
-    cr.execute("SELECT anwser FROM testingquestions WHERE experiment=%(subname)s",{"subname":subname})
+    cr.execute("SELECT anwser FROM testingquestions WHERE experiment=%s",(subname))
     data=cr.fetchall()
     correct1=list(data)
     for i in correct1:

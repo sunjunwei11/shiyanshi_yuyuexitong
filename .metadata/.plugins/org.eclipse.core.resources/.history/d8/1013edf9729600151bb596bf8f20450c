@@ -38,6 +38,8 @@ textarea{resize:none;}
 $(function() {
 var setDate = new Date();
 setDate.setFullYear(2015,10,25);
+setDate.toString();
+alert(setDate);
 var today = new Date();
 if (today < setDate){
     //alert("success.");

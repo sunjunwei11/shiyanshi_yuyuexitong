@@ -151,7 +151,7 @@ $('#anwser10').val("");
 				biaozhi=1;
 				break;
 		  }else{
-		      A["userid"] = userid
+		      A["type"] = type;
 		      A[i] = $(".select").eq(i).val();		      
 		      A["7"]=$("#anwser8").val();
 			  A["8"]=$("#anwser9").val();

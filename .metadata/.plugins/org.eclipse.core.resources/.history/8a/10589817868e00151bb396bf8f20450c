@@ -37,12 +37,12 @@ textarea{resize:none;}
 <script>
 $(function() {
 var setDate = new Date();
-setDate.setFullYear(2015,10,25);
+setDate.setFullYear(2015,9,14);
 var today = new Date();
 if (today < setDate){
     //alert("success.");
     $("#title").hide();
-    $("#start").replaceWith("<p><b>问卷调查（实验后）2015年11月25日开放！</b></p>");
+    $("#start").replaceWith("<p><b>问卷调查（实验后）2015年11月14日开放！</b></p>");
 }else{
     //alert("failed.");
 
@@ -187,7 +187,7 @@ $("#Dialogbutton").click(function(){
 						dataType : "json",
 						async : false,
 						success : function(data) {
-							showMessage(data["msg"]);
+							showMessage(data["msg"])
 							$("#done").attr("disabled",true).removeClass("done").addClass("done1");
 
 						}

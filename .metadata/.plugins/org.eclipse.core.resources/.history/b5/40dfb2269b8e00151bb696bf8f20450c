@@ -1119,7 +1119,6 @@ def choose(db):
                                     print "有websocket意外断掉",e
                         
                         else:
-                            Usersgroup_shiyan_date[shiyan][student_group]=mes_body["date"]+" "+mes_body["startTime"]
                             Usersid_group_inf[student_group] = []
                             Usersname_group_inf[student_group] = []
                             Users_init[student_group] = []  

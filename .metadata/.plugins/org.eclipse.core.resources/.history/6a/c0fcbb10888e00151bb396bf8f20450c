@@ -42,7 +42,7 @@ var today = new Date();
 if (today < setDate){
     //alert("success.");
     $("#title").hide();
-    $("#start").replaceWith("<p><b>问卷调查（实验后）2015年11月25日开放！</b></p>");
+    $("#start").replaceWith("<p><b>问卷调查（实验后）2015年11月14日开放！</b></p>");
 }else{
     //alert("failed.");
 
