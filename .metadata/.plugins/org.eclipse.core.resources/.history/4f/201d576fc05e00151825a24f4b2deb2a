@@ -1,0 +1,289 @@
+﻿# -*- coding:utf-8 -*-
+from beaker.middleware import SessionMiddleware
+import gevent
+import datetime
+import bottle,os
+import mysql.connector
+import json
+from mysql.connector import connect
+from bottle import run,route,template,static_file,request,error,Bottle,abort,\
+    response,SimpleTemplate,debug,post,get
+from bottle.ext.websocket import GeventWebSocketServer
+from bottle.ext.websocket import websocket
+
+
+#数据结构定义
+ws_set = set()
+app = Bottle()
+Users_init = list()#用于群聊，是初始用户列表
+Users_init2 = list()#用于单独的私聊窗口，是初始用户列表
+opposite = ''#用于存放私聊对象
+Users_private = list()#用于私聊
+Users_group = list()#用于小组讨论
+Users_group1 = list()
+Users_group2 = list()
+shiyanzu1 = ['老师','学生1','学生2']
+shiyanzu2 = ['老师','学生2','学生3']
+pairs = []#用于存放聊天双方用户
+members = []
+group1 = []
+group2 = []
+siliaouser = ''#用来存放请求私聊的用户名字
+test = []
+
+
+class User:
+    def __init__(self,wsocket):
+        self.username = ''
+        self.wsocket = wsocket
+        self.wsid = str(id(wsocket))
+        self.date = ''
+        self.message = ''
+        self.datetime = ''
+        self.status = '1'
+        self.siliao = '0'
+
+@app.route('/lib/<path:path>')
+def server_lib(path): 
+    return static_file(path, root='./html/lib/')
+
+@app.route('/<name>')
+def gethtml(name):    
+    return static_file(name,root = './html/')
+
+@app.route('/source/<name>')
+def src_files(name):
+    return static_file(name,root = './html/source/')
+
+@app.route('/source/images/<name>')
+def serv_images(name):
+    return static_file(name,root = './html/source/images/')
+
+
+@app.route('/welcome')    #显示欢迎界面
+@app.route('/welcome/:re')
+def welcome(re='firstvisit'):
+    session = request.environ['beaker.session'] 
+    session['leftmenu'] = ["shiyan1","shiyan2"]
+    return template('welcome_template_shiyan',re=re) 
+
+
+
+
+#带session的问卷调查-----------------------------------------------------------------------------
+@app.route('/get_session',method='POST')
+def get_session():
+    username=request.POST.get('username')
+    mima=request.POST.get('mima')
+    session =  request.environ['beaker.session']
+    session["username"] = username
+    session["mima"] = mima
+    print session["username"],session["mima"]
+    output = {"fistName":"true"}
+    return output
+
+@app.route('/liaotian')
+def liaotian(): 
+    session =  request.environ['beaker.session']
+    username = session.get('username')
+    mima = session.get('mima')
+    print "mimahe username",username,mima
+    student = {"学生1":["学生1","zhi1"],"学生2":["学生2","zhi2"],"学生3":["学生3","zhi3"]} 
+    return template('tpl/btl_chat_group_upd9',student=student,session = session,username = username,mima=mima)
+
+
+@app.route('/groupchat',apply=[websocket])
+def groupchat(ws):
+    print "groupchat begin"
+    global Users_init
+    global opposite
+    userepeat = ''#判断当前用户是否重复参与的标志位
+    wsock = ws
+    config = {'user':'root', 'password':'312312','host':'localhost','database':'liaotian','charset':'utf8','raw':True}#初始化数据库参数
+    cnx = connect(**config)#新建连接
+    
+
+    if not wsock:
+        abort(400, 'Expected WebSocket request.')#如果出现错误则用http响应报文返回，相当于还是在用http服务
+    else:
+        userx = User(wsock)#userx代表当前上传会话的用户
+        userx.username = userx.wsocket.receive()#获取该用户的用户名(浏览器中点击参与按钮)
+        userx.datetime = userx.wsocket.receive()
+        userx.message = userx.wsocket.receive()
+        userx.mima = userx.wsocket.receive()
+        print userx.username,userx.message,userx.mima
+        cursor=cnx.cursor()#新建游标
+        cursor.execute("select count(username) FROM userlistupd4 where username=%(username)s",{'username':userx.username})#读取数据库中username
+        liebiao1 = cursor.fetchall()  #将从数据库得来的表格存进liebiao
+        biaozhi1 = 0
+        for k in liebiao1:
+            if k[0] == "1":  
+                biaozhi1 = 1                                               
+        if biaozhi1 == 0: 
+            userx.wsocket.send('biaozhi'+'Lto/Gqr3TV2xdQ0I1Su9yQ'+u'您不能登入该聊天系统')   
+            userx.wsocket.close()                                               
+        cursor.close()#关闭游标
+        
+        cursor=cnx.cursor()#新建游标
+        cursor.execute("select * FROM mima where username=%(username)s",{'username':userx.username})#读取数据库中username
+        liebiao2 = cursor.fetchall()
+        biaozhi2 = 0
+        for k in liebiao2:
+            if k[1] == userx.mima:  
+                biaozhi2 = 1                                               
+        if biaozhi2 == 0: 
+            userx.wsocket.send('biaozhi2'+'Lto/Gqr3TV2xdQ0I1Su9yQ'+u'密码错误！')   
+            userx.wsocket.close()
+            del userx   
+            del wsock                                            
+        cursor.close()#关闭游标        
+        
+        
+        
+        #更新数据库
+
+        for i in Users_init:
+            if i.username == userx.username:
+                userepeat = '1'
+                userx.wsocket.send('repeat'+'Lto/Gqr3TV2xdQ0I1Su9yQ'+u'对不起,'+userx.username+u'已经参与其中，请先离线或更换用户名！')
+                userx.wsocket.close()
+                del userx
+                del wsock
+                break#万一此用户已将在列表中，则中断for循环，else语句不会执行，从而该用户不会被添加到列表中
+        else:
+            Users_init.append(userx)#for循环正常结束则执行这条语句，说明该用户没有在之前的列表中则将该对象放入用户列表中 
+            cursor=cnx.cursor()#新建游标
+            cursor.execute("UPDATE userlistupd4 SET wsid=%(wsid)s,userstatus=%(userstatus)s,siliao=%(siliao)s,stamps=%(stamps)s WHERE username=%(username)s",{'siliao':userx.siliao,'username':userx.username,'wsid':userx.wsid,'userstatus':userx.status,'stamps':userx.datetime})
+            cnx.commit()#python/connector规定插入删除修改数据库后必须提交
+#         Users_init.append(userx)#for循环正常结束则执行这条语句，说明该用户没有在之前的列表中则将该对象放入用户列表中 
+        if userepeat == '1':
+            userepeat = '0'
+            return#直接终止当前函数运行
+        status_start = {}#存储用户状态的字典，用于向其他用户广播
+        for i in Users_init:
+            status_start[i.username] = i.status
+
+        for i in Users_init:
+            i.wsocket.send('statustart'+'Lto/Gqr3TV2xdQ0I1Su9yQ'+json.dumps(status_start))#在删除该对象之前将该用户的状态广播出去
+        
+        if userx.message == 'shiyanzu':
+                limit1 = 0
+                limit2 = 0
+                for k in shiyanzu1:
+                    if k == userx.username:
+                        limit1 = 1
+                for i in Users_init:
+                    if i.username == userx.username :
+                        if limit1 == 0 :                                                    
+                            i.wsocket.send('no permission1'+'Lto/Gqr3TV2xdQ0I1Su9yQ'+u'您不在此讨论组内！')
+                        else:
+                            i.wsocket.send('permission1')
+                for k in shiyanzu2:
+                    if k == userx.username:
+                        limit2 = 1
+                for i in Users_init:
+                    if i.username == userx.username :
+                        if limit2 == 0 :                                                    
+                            i.wsocket.send('no permission2'+'Lto/Gqr3TV2xdQ0I1Su9yQ'+u'您不在此讨论组内！')
+                        else:
+                            i.wsocket.send('permission2')                             
+                                    
+                        
+        cursor.callproc('proc1', (userx.username,))
+        for result in cursor.stored_results():
+            once = result.fetchone()
+            while once is not None:
+                print once
+                userx.wsocket.send('statusend'+'Lto/Gqr3TV2xdQ0I1Su9yQ'+once[0]+'Lto/Gqr3TV2xdQ0I1Su9yQ'+str(once[1])+'Lto/Gqr3TV2xdQ0I1Su9yQ'+once[2])
+                once = result.fetchone()
+                
+#        cursor.execute("delete from usrstatchgupd4 where username=%(username)s",{'username':userx.username})#当用户的消息被推送出去之后，应立刻把记录用户状态变化表中该用户的所有记录删除，防止该表内容不断增多
+        cnx.commit()#同样当删除操作完成后，应
+        cursor.close()
+        
+    print Users_init
+    while True:
+        
+        try:
+            userx.datetime = userx.wsocket.receive()#此处在会话过程中进行
+            userx.message = userx.wsocket.receive()
+                
+            print userx.wsid
+            print userx.username
+            print userx.datetime
+            print userx.message
+            print userx.status
+            print userx.siliao
+        except:
+            break
+        print len(Users_init)
+        cursor=cnx.cursor()#新建游标
+        #更新用户状态，此工作在receive之后和send之前进行，保证数据库根据receive的内容更新用户状态，并在提取用户信息以用于send之前进行更新
+        if userx.message[0:22] == 'Lto/Gqr3TV2xdQ0I1Su9yQ':#当用户点击离线按钮时执行            
+            userx.status = '0'
+            cursor.execute("INSERT INTO dialogupd4 VALUES (%s,%s,%s,%s,%s)",(userx.username,userx.message,userx.status,userx.datetime,0))
+            cursor.execute("UPDATE userlistupd4 SET userstatus=%(userstatus)s,stamps=%(stamps)s WHERE username=%(username)s",{'userstatus':userx.status,'username':userx.username,'stamps':userx.datetime})
+            cnx.commit()
+        if userx.message[0:22] == '8GhmcB5mS2kdW+HJbUKUYA':#当浏览器点击私聊时执行，截取用户发来的消息的前22个字符来判断用户是否进入私聊模式
+#             userx.status = '0'#此处必须将其状态同时置零（因为进入私聊模式就相当于离线），用于阻止其向其他用户发送信息同时向其他用户广播其离线的消息
+            userx.siliao = '1' 
+            opposite = userx.message[22:]#截取用户发来的消息的后面的字符以获取用户想要私聊的对方用户的名字
+            if opposite != '':
+                pair = ['','']
+                pair[0] = userx.username
+                pair[1] = opposite
+                pairs.append(pair)
+                                        
+            cursor.execute("UPDATE userlistupd4 SET siliao=%(siliao)s WHERE username=%(username)s",{'siliao':userx.siliao,'username':userx.username})
+            cnx.commit()
+            for i in Users_init:
+                if i.username == opposite and i.status !=0:#如果用户名为‘opposite’的用户状态为在线状态则向其发送私聊请求信息
+                    i.wsocket.send('private'+'Lto/Gqr3TV2xdQ0I1Su9yQ'+userx.username+'Lto/Gqr3TV2xdQ0I1Su9yQ'+u'像您发起会话')
+#存会话
+
+        if userx.message[0:22] == '9GhmcB5mS2kdW+HJbUKUYA':
+            member1 = userx.username
+            member = userx.message[22:]
+            if member1 in members:
+                pass
+            else:
+                members.append(member1)
+                for i in Users_init:                    
+                    if i.username == userx.username:
+                        i.wsocket.send('group'+'Lto/Gqr3TV2xdQ0I1Su9yQ'+userx.username+'Lto/Gqr3TV2xdQ0I1Su9yQ'+u'邀请你加入小组讨论！')
+            members.append(member)#前面要定义menbers = []            
+            for i in Users_init:
+                if i.username == members[len(members)-1]:
+                    i.wsocket.send('group'+'Lto/Gqr3TV2xdQ0I1Su9yQ'+userx.username+'Lto/Gqr3TV2xdQ0I1Su9yQ'+u'邀请你加入小组讨论！')                                                
+                                                                
+        if (userx.message[0:7] == 'qunliao') :
+            cursor.execute("INSERT INTO dialogupd4 VALUES (%s,%s,%s,%s,%s)",(userx.username,userx.message[7:],userx.status,userx.datetime,0))
+            cnx.commit()                                                    
+        cursor.close()          
+        if userx.status == '1':
+            if (userx.message[0:7] == 'qunliao'):
+                for i in Users_init:#检查初始Users_init中哪个用户状态为离线，把未离线的用户提取出来，方便后面将信息在在线的用户中广播，不在线的用户将无法接收到消息
+                        i.wsocket.send('statusend'+'Lto/Gqr3TV2xdQ0I1Su9yQ'+userx.username+'Lto/Gqr3TV2xdQ0I1Su9yQ'+userx.datetime+'Lto/Gqr3TV2xdQ0I1Su9yQ'+userx.message[7:])#+'Lto/Gqr3TV2xdQ0I1Su9yQ'+'Lto/Gqr3TV2xdQ0I1Su9yQ'.join(status_end))#此处必须用复杂字符串来分隔不同的消息，避免message中出现，。！？等特殊字符,增加前缀为了区分不同的消息类型
+ 
+                    
+        
+        else:
+            Users_init.remove(userx)#从列表中删除离线对象
+            for i in Users_init:
+                    i.wsocket.send('statustart'+'Lto/Gqr3TV2xdQ0I1Su9yQ'+json.dumps({userx.username:userx.status}))#在删除该对象之前将该用户的状态广播出去
+            userx.wsocket.close()
+            del userx#删除该对象，从而使其在后面程序中不能向其他用户发送信息
+            del wsock
+
+
+session_opts = {
+    'session.type': 'file',
+    'session.cookie_expires': True,
+    'session.data_dir': os.path.join('/MyWorkspace/jcp1/ws', 'session'),
+    'session.auto': True
+}
+
+app = SessionMiddleware(app, session_opts)
+          
+if __name__ == '__main__':
+    run(app, server=GeventWebSocketServer)

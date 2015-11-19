@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;gunicorn_websocket/tpl/btl_chat_group_upd9.html&apos; to &apos;btl_chat_group_upd9.tpl&apos;" description="Rename resource &apos;btl_chat_group_upd9.html&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="tpl/btl_chat_group_upd9.html" name="btl_chat_group_upd9.tpl" stamp="1441969959839" updateReferences="true"/>
+</session>

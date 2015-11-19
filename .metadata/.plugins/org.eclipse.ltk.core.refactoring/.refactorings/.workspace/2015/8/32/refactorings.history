@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;gunicorn_websocket/btl_chat_group_upd9.html&apos;" deleteContents="false" description="Delete resource &apos;gunicorn_websocket/btl_chat_group_upd9.html&apos;" element1="/gunicorn_websocket/btl_chat_group_upd9.html" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1439034305000"/>
+</session>

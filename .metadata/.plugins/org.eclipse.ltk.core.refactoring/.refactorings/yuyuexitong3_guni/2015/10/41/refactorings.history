@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;yuyuexitong3_guni/views/liaotianui.html&apos; to &apos;liaotianui.tpl&apos;" description="Rename resource &apos;liaotianui.html&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="views/liaotianui.html" name="liaotianui.tpl" stamp="1444301819629" updateReferences="true"/>
+</session>

@@ -1,0 +1,46 @@
+// JavaScript Document
+$(function(){
+	$(".tab_close").live({
+		mouseenter:
+		function(){
+		   $(this).css("background","url(/tabs_daohanglan/demo/img/icon/icon-close-over.gif)");
+	},
+	     mouseleave:
+	     function(){
+		    $(this).css("background","url(/tabs_daohanglan/demo/img/icon/icon-close.gif)");
+		}
+	});
+	$(".tab_close").live("click",function(event){
+		$(this).parent().remove();
+		event.stopPropagation();
+		});
+	$(".tabs nav ul li ").live("click",function(){
+		$(this).siblings().attr("class","");
+		$(this).attr("class","tab-current");
+		});
+	$("#browser li a").live("click",function(){
+	    alert("dds");
+	    str1 = $(this).find("span:first").html();
+	    str2 = $(this).attr("id");
+	    alert(str2);
+	    var biaozhi = $(this).attr("biaozhi");//设定一个标志位，若该位为0则说明该链接未被打开，为1则说明已被打开
+	    alert("biaozhi: "+biaozhi);
+   
+	    $(".tabs-style-iconbox nav ul").append(tabHtml(str1));
+	        function tabHtml(str1){
+		      var str='<li><a href="#section-iconbox-7" ><span>'+str1+'</span></a><div class="tab_close"></div></li>';
+		      return str;
+		        }
+		$("body").append(content_Html);
+		    function content_Html(){
+		        var str='<div class="liaotian_content nihao"><iframe class="liantian_jiemian1" style="display:block" src="/teacher_liaotianui/'+str2+'"></iframe></div>'
+		        return str;
+		    }   
+		$(".liaotian_content").hide();
+		$(".nihao").show(); 
+		    
+		    //[].slice.call( document.querySelectorAll( '.tabs' ) ).forEach( function( el ){
+			    //new CBPFWTabs( el );					
+				//});
+		});
+	});

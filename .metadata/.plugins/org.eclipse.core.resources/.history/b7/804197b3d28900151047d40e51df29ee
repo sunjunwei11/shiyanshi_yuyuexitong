@@ -1,0 +1,64 @@
+// JavaScript Document
+$(function(){
+	$(".tab_close").live({
+		mouseenter:
+		function(){
+		   $(this).css("background","url(/tabs_daohanglan/demo/img/icon/icon-close-over.gif)");
+	},
+	     mouseleave:
+	     function(){
+		    $(this).css("background","url(/tabs_daohanglan/demo/img/icon/icon-close.gif)");
+		}
+	});
+	$(".tab_close").live("click",function(event){
+		$(this).parent().remove();
+		event.stopPropagation();
+		});
+	$(".tabs nav ul li ").live("click",function(){
+		$(".tabs nav ul li ").removeClass("tab-current");
+		$(this).addClass("tab-current");
+		var the_tab_class= $(this).attr("class");
+		var the_length = the_tab_class.length;
+		var the_need_class = the_tab_class.substring(0,the_length-12);
+		$(".liaotian_content").hide();
+		$("#main").siblings("."+the_need_class).show();
+		});
+	$("#browser li a").live("click",function(){
+	    alert("dds");
+	    str1 = $(this).find("span:first").html();
+	    str2 = $(this).attr("id");
+	    alert(str2);
+	    var biaozhi = $(this).attr("biaozhi");//设定一个标志位，若该位为0则说明该链接未被打开，为1则说明已被打开
+	    alert("biaozhi: "+biaozhi);
+	    if (biaozhi == "0"){//biaozhi为0，则说明未打开该讨论组，点击的时候打开，将所有选项卡的状态显示为未被选中，然后添加该组选项卡，并设选项卡class为tab-current使其显示为被选中状态
+	                        //再添加聊天界面frame，并显示
+	        $(".tabs nav ul li ").removeClass("tab-current");//将原先选项卡显示的样式先去掉
+	    	$(".tabs-style-iconbox nav ul").append(tabHtml(str1));
+	        function tabHtml(str1){
+		       var str='<li class="tab-current '+str2+'"><a href="#section-iconbox-7" ><span>'+str1+'</span></a><div class="tab_close"></div></li>';
+		       return str;
+		        }
+		    $("body").append(content_Html);
+		    function content_Html(){
+		        var str='<div class="liaotian_content '+str2+'"><iframe class="liantian_jiemian1" style="display:block" src="/teacher_liaotianui/'+str2+'"></iframe></div>'
+		        return str;
+		    } 
+		    $(this).attr("biaozhi","1") ;
+		    alert($(this).attr("biaozhi"));
+	    }
+	    else {
+	        $(".tabs nav ul li ").removeClass("tab-current");
+	        replace_class = ".tabs nav ul .li";
+	        replace_class2 = replace_class.replace("li",str2);
+	        alert(replace_class2);
+	        $(replace_class2).addClass("tab-current");
+	        $(".liaotian_content").hide();
+		    $("#main").siblings("."+str2).show(); 
+	    }
+   
+  
+		$(".liaotian_content").hide();
+		$("#main").siblings("."+str2).show(); 
+		    
+		});
+	});
