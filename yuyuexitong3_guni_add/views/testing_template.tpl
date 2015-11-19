@@ -18,7 +18,7 @@ div{padding:10px;}
 #done, .startdiv{margin:0 auto;text-align:center;}
 .header{background-color:#FF5555;}
 .header p{color:black;}
-p{font-size:17px;}
+p{font-size:19px;}
 .dialog{width:360px;border:solid 5px #CCDDFF;position:absolute;display:none;z-index:999;padding:0px;}
 .dialog .title{background-color:#CCDDFF;padding:10px 10px 10px 30px;;font-weight:bold;}
 .dialog .title img{float:right;}
@@ -247,7 +247,7 @@ function showQuestion(j,obj){
 </script>
 <body>
   <div class="header"><h1>Testing</h1>
-  <div><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp测试部分用来检测你是否已完全掌握做本次实验所需要的知识，测试的内容来自本次实验的预习部分，测试完成后点击提交按钮即可得到本次测试的成绩。测试成绩合格为70分，只有成绩达到合格方可进行实验预约，成绩不合格需再次进行实验预习。</p></div>
+  <div><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp测试部分用来检测你是否已完全掌握做本次实验所涉及的知识，测试的内容来自本次实验的预习部分以及书本的相关内容，测试完成检查无误后后点击提交按钮即可得到本次测试的成绩。测试成绩合格为70分，只有成绩达到合格方可进行实验预约，成绩不合格需再次进行测试。</p></div>
   </div><br />
   <div style="width:1000px;height:1px;margin:0px auto;padding:0px;background-color:#D5D5D5;overflow:hidden;"></div><br />
   <div class="startdiv"><input type="button" value="开始" class="start" /></div>

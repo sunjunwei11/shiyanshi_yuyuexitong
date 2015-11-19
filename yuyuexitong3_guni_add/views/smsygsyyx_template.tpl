@@ -140,7 +140,7 @@
 											},
 											success : function(data) {
 												showMessage("你已完成预习!");
-
+                                                $("#button1").attr("disabled",true).removeClass("button1").addClass("button2");
 											}
 										})
 
@@ -153,7 +153,7 @@
 
 							})
 						} else {
-							//alert("您已完成预习部分");
+							 $("#button1").attr("disabled",true).removeClass("button1").addClass("button2");
                              showMessage("你已完成预习！");
 						}
 					}

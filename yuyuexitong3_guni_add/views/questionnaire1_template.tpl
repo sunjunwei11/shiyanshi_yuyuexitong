@@ -224,7 +224,7 @@ $("#Dialogbutton").click(function(){
 <body>
     <div id=header><img class="img" src="/images/questionnaire/questionnaire11.jpg"/></div>
     
-    <div id="title"><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp肯定回答为10分，否定回答为0分，中间1-9分表示肯定或否定的程度，数字越大表示肯定的程度越大否定的程度越小。例如第一题：如果是十分有收获则评分为10，有点收获到有收获可以再6-9区间内打分，不确定为5分，非常收获到基本没收获分值为1-4分，完全没收获则评分为0分，请同学们根据自己的真实感受打分，感谢你的参与！</p></div>
+    <div id="title"><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp肯定回答为10分，否定回答为0分，中间1-9分表示肯定或否定的程度，数字越大表示肯定的程度越大否定的程度越小。例如第一题：如果是十分有帮助则评分为10，有点帮助到有帮助可以再6-9区间内打分，不确定为5分，非常有帮助到基本没帮助分值为1-4分，完全没帮助则评分为0分，请同学们根据自己的真实感受打分，感谢你的参与！</p></div>
     <div style="width:1000px;height:1px;margin:0px auto;padding:0px;background-color:#D5D5D5;overflow:hidden;"></div><br />
     <div class="com1"><input id="start" type="submit" class="start" value="开始" /></div>
  
