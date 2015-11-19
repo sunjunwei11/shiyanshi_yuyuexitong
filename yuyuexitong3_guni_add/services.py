@@ -633,7 +633,7 @@ def statecheckForYuxi(db):
     userid=session.get("user")["userid"]    
     #print userid
     cr=db.cursor()
-    cr.execute("SELECT state FROM questionnairestate WHERE userid=%s",(userid))
+    cr.execute("SELECT state FROM questionnairestate WHERE userid=%(userid)s",{"userid":userid})
     result1=cr.fetchall()
     #print result1
     #result2=list(result1)

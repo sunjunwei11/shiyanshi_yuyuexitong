@@ -953,16 +953,16 @@
 							<tr>
 								<td><label>实验人数</label>
 								<select name="maxnum" id="maxnum" style="width:256px">
-									<option value="0">2</option>
-									<option value="1">4</option>
-									<option value="2">6</option>
-									<option value="3">8</option>
-									<option value="4">10</option>
-									<option value="5">12</option>
-									<option value="6">14</option>
-									<option value="7">16</option>
-									<option value="8">18</option>
-									<option value="9">20</option>
+									<option value="2">2</option>
+									<option value="4">4</option>
+									<option value="6">6</option>
+									<option value="8">8</option>
+									<option value="10">10</option>
+									<option value="12">12</option>
+									<option value="14">14</option>
+									<option value="16">16</option>
+									<option value="18">18</option>
+									<option value="20">20</option>
 								</select></td>
 							</tr>
 							<tr>
