@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>汉理工大学过程控制实验室</title>
+		<title>武汉理工大学专业与创新实验室</title>
 		
 		<!--<script src="js/ligerUI/js/core/base.js" type="text/javascript"></script>-->
 		<link rel="stylesheet" type="text/css" href="js/ligerUI/skins/Aqua/css/ligerui-all.css">
@@ -189,7 +189,7 @@
 		<div id="pageloading"></div>
 		<div id="topmenu" class="l-topmenu" style="background-color:#82B1AD">
 			<img src="images/logo.png" width="66" height="66" style=" position:absolute;top:1px;left:50px;"/>
-			<span style="color:rgb(6,5,8); margin-left: 150px;width:94px;font-size:50px; font-style:italic">武汉理工大学过程控制实验室</span>
+			<span style="color:rgb(6,5,8); margin-left: 150px;width:94px;font-size:50px; font-style:italic">武汉理工大学专业与创新实验室</span>
 			<div>
 				<p align="right" style="margin-bottom:0;margin-top:6px">
 					% user=session.get('user')
@@ -227,7 +227,7 @@
 					
 				</div>
 				<div title="实验报告">
-					
+				<a class="l-link" href="javascript:f_addTab('listpage5','学生实验报告','/teacherbaogao')">学生实验报告</a>		
 				</div>
 				<div title="聊天系统">
 				<a class="l-link" href="javascript:f_addTab('listpage2','聊天系统','/teacherui')">聊天系统</a>	

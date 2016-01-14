@@ -58,7 +58,7 @@ $(function(){
 		        }
 		    $("body").append(content_Html);//添加该链接所对应的聊天界面
 		    function content_Html(){
-		        var str='<div class="liaotian_content '+str2+'"><iframe class="liantian_jiemian1" style="display:block" src="/teacher_liaotianui/'+str2+'"></iframe></div>'
+		        var str='<div class="liaotian_content '+str2+'"><iframe class="liantian_jiemian1" style="display:block" src="/html/baogao_chakan.html"></iframe></div>'
 		        return str;
 		    } 
 		    $(this).attr("biaozhi","1") ;

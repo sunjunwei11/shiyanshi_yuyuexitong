@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>武汉理工大学过程控制实验室</title>
+		<title>武汉理工大学专业与创新实验室</title>
 		
 		<!--<script src="js/ligerUI/js/core/base.js" type="text/javascript"></script>-->
 		<link rel="stylesheet" type="text/css" href="js/ligerUI/skins/Aqua/css/ligerui-all.css">
@@ -205,7 +205,8 @@
 							children:[{url:newdata[i]["yuxiurl"]+'?couname='+data4+'&subname='+newdata[i]["subexperimentname"],text:"预习"},
 							{url:newdata[i]["ceshiurl"]+'?couname='+data4+'&subname='+newdata[i]["subexperimentname"],text:"测试"},
 							{url:newdata[i]["yuyueurl"]+'?couname='+data4+'&subname='+newdata[i]["subexperimentname"],text:"预约"},
-							{url:newdata[i]["baogaourl"]+'?couname='+data4+'&subname='+newdata[i]["subexperimentname"],text:"实验报告"},
+							//{url:newdata[i]["baogaourl"]+'?couname='+data4+'&subname='+newdata[i]["subexperimentname"],text:"实验报告"},
+							{url:"/demo.html",text:"实验报告"},
 							{url:newdata[i]["liaotianurl"]+"/"+screen_height,text:newdata[i]["group_name"]+"讨论组"}]};
 							/*alert(newdata["text"])
 							newdata["isexpand"]=false;
@@ -326,7 +327,7 @@
 		<div id="pageloading"></div>
 		<div id="topmenu" class="l-topmenu" style="background-color:#82B1AD">
 			<img src="images/logo.png" width="66" height="66" style=" position:absolute;top:1px;left:50px;"/>
-			<span style="color:rgb(6,5,8); margin-left: 150px;width:94px;font-size:50px; font-style:italic">武汉理工大学过程控制实验室</span>
+			<span style="color:rgb(6,5,8); margin-left: 150px;width:94px;font-size:50px; font-style:italic">武汉理工大学专业与创新实验室</span>
 			<div>
 				<p align="right" style="margin-bottom:0;margin-top:6px">
 					% user=session.get('user')

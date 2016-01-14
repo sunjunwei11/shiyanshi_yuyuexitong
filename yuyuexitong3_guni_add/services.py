@@ -128,6 +128,10 @@ def server_css(path):
 def server_plugins(path):
     return static_file(path,root='plugins')
 
+@app.route('/kindeditor-4.1.10/:path#.+#')
+def server_kindeditor(path):
+    return static_file(path,root='kindeditor-4.1.10')
+
 #测试SQLitePlugin插件为mysql插件做准备 
 #sqlite = SQLitePlugin(dbfile='./tmpdb/test.db')
 #app.install(sqlite)
@@ -239,6 +243,10 @@ def teacherui(db):
     wenjianshu_dict = {"guokong_shangshuixiang":["上水箱对象特性","上水箱讨论组"],"guokong_danbihuan":["液位单闭环控制","单闭环讨论组"],
                      "guokong_chuanjikongzhi":["流量液位串级控制","串级控制讨论组"],"guokong_shimisi":["史密斯预估实验","史密斯讨论组"]}
     return template('tabs_daohanglan/demo/teacherui.tpl',session = session,Usersgroup_shiyan_date=Usersgroup_shiyan_date,wenjianshu_dict=wenjianshu_dict)
+
+@app.route('/teacherbaogao')
+def teacherbaogao():
+    return template('tabs_daohanglan/demo/teacherbaogao.tpl')
 
 @app.route('/groupchat',apply=[websocket])
 def groupchat(ws,db):

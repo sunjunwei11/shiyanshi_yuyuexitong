@@ -171,7 +171,7 @@
 			<div id="headerWrapper">
 				<div id="headerCenter">
 					<div id="headerTitles">
-						<h1><a href="#!">自动化实验室</a></h1>
+						<h1><a href="#!">专业和创新实验室</a></h1>
 						<h2>zi dong hua shi yan shi</h2>
 					</div>
 					<nav>
@@ -187,10 +187,10 @@
 					</div>
 					<div id="xueshengxinxi">
 				    <div>
-				        <b>学号:{{user["userid"]}}</b>
+				        <b><font color="#32CD32">学号 {{user["userid"]}}</font></b>
 				    </div>
 				    <div>
-				        <b>姓名:{{user["username"]}}</b>
+				        <b><font color="#32CD32">姓名 {{user["username"]}}</font></b>
 				    </div>				        			    
 				</div>
 				
