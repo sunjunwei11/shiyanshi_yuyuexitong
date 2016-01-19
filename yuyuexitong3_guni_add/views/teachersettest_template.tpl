@@ -613,7 +613,8 @@
 					} else {
 						cinfo["zt"] = 0;
 					}
-
+					%user = session.get("user")
+			        var userid = '{{user["userid"]}}';
 					cinfo["experimentname"] = $("#Newexperiments").val();
 					cinfo["subexperimentname"] = $("#Newcontent").val();
 					cinfo["sxTime"] = $("#citySel").val();
@@ -624,6 +625,7 @@
 						url : "/savecinfo",
 						dataType : "json",
 						data : {
+							userid : userid,
 							saveinfo : $.param(cinfo)
 						},
 						type : "POST",
@@ -952,18 +954,8 @@
 							</tr>
 							<tr>
 								<td><label>实验人数</label>
-								<select name="maxnum" id="maxnum" style="width:256px">
-									<option value="2">2</option>
-									<option value="4">4</option>
-									<option value="6">6</option>
-									<option value="8">8</option>
-									<option value="10">10</option>
-									<option value="12">12</option>
-									<option value="14">14</option>
-									<option value="16">16</option>
-									<option value="18">18</option>
-									<option value="20">20</option>
-								</select></td>
+								<input type="text" id="maxnum" size="30"/>
+								
 							</tr>
 							<tr>
 								<td>设备分配原则

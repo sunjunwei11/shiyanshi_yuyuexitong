@@ -124,7 +124,7 @@
 									//alert("sta=false")
 									var date2 = new Date();
 									var date3 = date2 - date1;
-									if (date3 < 360000) {
+									if (date3 < 36) {
 										showMessage("预习时长未满，请认真预习！");
 									} else {
 										//alert("准备提交")

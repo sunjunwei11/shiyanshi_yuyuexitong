@@ -180,7 +180,7 @@
 						<a id="group2"> <img src="img/icons/questionmark.png" alt="Support"/> 功能部分 </a>
 					</nav>
 					<div>
-						<p align="right" style="margin-bottom:0;margin-top:6px">
+						<p align="right" style="margin-bottom:0;margin-top:6px" color="#FFD700">
 							% user=session.get('user')
 						</p>
 					</div>
@@ -190,7 +190,7 @@
 				        <b><font color="#32CD32">学号 {{user["userid"]}}</font></b>
 				    </div>
 				    <div>
-				        <b><font color="#32CD32">姓名 {{user["username"]}}</font></b>
+				        <b><font color="#32CD32">姓名 {{user["username"]}}<font></b>
 				    </div>				        			    
 				</div>
 				

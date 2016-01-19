@@ -35,9 +35,9 @@
             
 			
 			%user = session.get("user")
+			var position = '{{user["position"]}}';
 			var studentname = '{{user["username"]}}';
-		
-			var studentid='{{user["userid"]}}';
+			var studentid='{{user["userid"]}}'
 			var coursename = getquerystring("couname");
 			var subexperimentname = getquerystring("subname");
 			
@@ -298,9 +298,9 @@
                        },
           
 		   eventClick:function (calEvent, jsEvent, view){//事件被点击
-		                      
-		                        
-		                       //$(this).css('border-color', 'red');
+		                      if(position=="老师"){alert("老师只能查看可预约的实验，不能进行预约实验")}
+		                      else if(position=="学生"){
+		                      	 //$(this).css('border-color', 'red');
 		                         var fstart = $.fullCalendar.formatDate(calEvent.start,"yyyy-MM-dd HH:mm");
 				                 var fend = $.fullCalendar.formatDate(calEvent.end, "yyyy-MM-dd HH:mm");
 				                 var ftitle = calEvent.title;  //事件title
@@ -427,6 +427,11 @@
                  }
                     else
                         showMessage('此日期已经过期，请选择其它时间！');
+		                      
+		                      }
+		                      else {alert("无权限预约")}
+		                        
+		                      
 		                                               },
 		    eventMouseover:function(event){
 		                   //$("calendar").fullCalendar('gotoDate', 2015,09,09);

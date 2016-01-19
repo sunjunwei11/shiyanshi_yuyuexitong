@@ -358,8 +358,9 @@
 				</div>
 				<div title="实验预约查询">
 					<a class="l-link" href="javascript:f_addTab('listpage','预约查询','yuyuechaxun')">预约查询</a> 
-					
-					
+				</div>
+				<div title="测试成绩查询" class="l-scroll">
+					<a class="l-link" href="javascript:f_addTab('scrinquery','测试成绩查询','/tscrinquery')">测试成绩查询</a>		
 				</div>
 				
 				

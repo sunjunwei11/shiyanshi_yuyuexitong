@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>上传文件</title>
+
+</head>
+
+<body style="background-color:#D4CDD4;">
+    <div style="height:60px;background-color:#74739A;;color:white;font-size:36px;text-align:center; padding-top:20px;">文件上传系统</div>
+    <div style="height:40px;background-color:#D9D7DA;color:#803D3D;font-size:18px;text-align:center;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;file upload system</div>
+    <div style="text-align:center; font-size:28px;">
+    <p style="color:red;font-size:24px;">注意:上传的文件务必以字母和数字命名</br>长度不要超过15位</p>
+    <form action="upload" method="POST" enctype="multipart/form-data">
+    <input type="file" id="file" name="data" onchange="GetFilename(this)"/>
+    <input type="submit" value="Upload" />
+    </form>
+    </div>
+
+<script>
+function GetFilename(input){
+	var fileName_rout=input.value;
+	var filename_index=fileName_rout.lastIndexOf("\\");
+	var filename=fileName_rout.substring(filename_index+1);
+	var strlen = 0;
+	for(var i=0;i<filename.length;i++){
+		if(filename.charCodeAt(i)>255){
+		    alert ("文件名字不能含有中文，请用字母和数字命名");
+		    var obj = document.getElementById('file');
+		    obj.outerHTML=obj.outerHTML; 
+			break;
+			}
+		else if(i>15){
+		    alert ("文件名位数不能超过15位");
+		    var obj = document.getElementById('file');
+		    obj.outerHTML=obj.outerHTML; 
+			break;		
+		   } 
+	 }
+}
+</script>
+</body>
+</html>

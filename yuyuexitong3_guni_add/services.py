@@ -5,6 +5,7 @@
 import random,exceptions
 from exceptions import Exception
 import re
+import json
 import time, datetime, logging, sqlite3, os, string, sys, StringIO, urllib,urlparse,shutil
 from datetime import date
 from datetime import *
@@ -17,6 +18,7 @@ from plugins.bottle_frontdoor import FrontDoorPlugin
 from decimal import *
 import MySQLdb
 import base64 
+from cherrypy._cpwsgi import downgrade_wsgi_ux_to_1x
 app = bottle.default_app()
 
 #--------------------------------------------------------------------------------
@@ -132,6 +134,7 @@ def server_plugins(path):
 def server_kindeditor(path):
     return static_file(path,root='kindeditor-4.1.10')
 
+
 #测试SQLitePlugin插件为mysql插件做准备 
 #sqlite = SQLitePlugin(dbfile='./tmpdb/test.db')
 #app.install(sqlite)
@@ -140,6 +143,47 @@ app.install(frontdoor)
 mysql = MySQLPlugin(dbfile='labtest')
 app.install(mysql)
 
+#-----------------------------上传及下载文件-------------------------------------------------
+@app.route('/download')
+def get_downloadfile(db):
+    cr=db.cursor()
+    cr.execute('''SELECT COUNT(filename) FROM savefiles''')
+    file_number = cr.fetchall()
+    file_number = file_number[0][0]
+    print "一共可下载的文件数量: ",file_number
+    cr.execute('''SELECT filename FROM savefiles''')
+    file_names = cr.fetchall()
+    print "可下载的文件的名字",file_names
+    file_lists = []
+    for i in file_names:
+        file_lists.append(str(i[0]))
+    print "file_lists: ",file_lists
+    cr.close()
+    return template('./html/download_file',file_number=file_number,file_lists=file_lists)
+
+@app.route('/download/<filename>')
+def server_download(filename):
+    return static_file(filename,root='for_upload_download/',download=True)
+
+
+upload_path = './for_upload_download'
+@app.route('/upload',method='POST')
+def do_upload(db):
+    uploadfile=request.files.get('data') #获取上传的文件
+    full_name=uploadfile.filename
+    name,ext=os.path.splitext(full_name)
+    print "文件名字",name,"后缀",ext
+    try:
+        uploadfile.save(upload_path,overwrite=False)#overwrite参数是指覆盖同名文件
+        cr = db.cursor()
+        cr.execute('''INSERT INTO savefiles (filename) VALUES (%(filename)s)''',{"filename":full_name})
+        cr.close()
+        return u"上传成功,文件名为：%s，文件类型为：%s"% (uploadfile.filename,uploadfile.content_type)
+    except IOError:
+        return u"该文件名已存在，若要继续上传，请更改文件名"
+
+    
+#-----------------------------上传及下载文件------------------+++++++++++++++++++++++++++++++
 #++++++++++++++++++++++聊天部分内容==================================================================
 @app.route('/hello/:name/:name2')#测试
 def hello(name,name2): 
@@ -480,7 +524,7 @@ def resign(db):
     else:
         cr.execute('''SELECT admininf.`password` FROM admininf WHERE admininf.adminid=%s'''%(userid))
         row=cr.fetchone() 
-    cr.close
+    cr.close()
     if row!=None:               #该用户存在
         rows=list(row)
         password_=rows[0]       #取出数据库中对应密码
@@ -507,7 +551,7 @@ def resign(db):
         else:
             cr.execute('''SELECT admininf.adminname,admininf.password,admininf.quanxian,admininf.school,admininf.position FROM admininf WHERE admininf.adminid = %s'''%(userid))
             row=cr.fetchone()    
-        cr.close
+        cr.close()
         #print row
         #print row
         username_=row[0]
@@ -532,7 +576,7 @@ def resign(db):
         else:
             cr.execute('''SELECT authority.xiangmu FROM authority ,admininf WHERE authority.quanxian = admininf.quanxian AND admininf.adminid = %s'''%(userid))
             rows=cr.fetchall()
-        cr.close
+        cr.close()
         print 'rows', rows
         frontdoor.set_leftmenu(rows)
         tmpleft=session.get('leftmenu')
@@ -590,8 +634,20 @@ def studentstest():
 @app.route('/teachersettest')  #老师设置课程的测试页面
 def teachersettest():
     print "teachersettest"
-    return template('teachersettest_template')
+    session = request.environ['beaker.session']
+    return template('teachersettest_template',session=session)
 
+@app.route('/settestinquiry')  #老师设置课程的查询和删除
+def settestinquiry():
+    print "settestinquiry"
+    session = request.environ['beaker.session']
+    return template('settestinquiry_template',session=session)
+
+@app.route('/modifycourse')  #老师设置课程的修改
+def modifycourse():
+    print "modifycourse"
+    session = request.environ['beaker.session']
+    return template('modifycourse_template',session=session)
 
 @app.route('/test')
 def test():
@@ -612,8 +668,8 @@ def labreport():
 @app.route('/test2')
 def test2():
     print "test2"
-    session = request.environ['beaker.session']
-    return template('test2_template',session=session)
+    #session = request.environ['beaker.session']
+    return template('test2_template')
 
 
 @app.route('/studentsys')  #学生框架metro ui个人桌面风格页面
@@ -861,6 +917,7 @@ def tframepart1():
     frontdoor.set_channel(u'基础部分2')
     return template('tframepart1_template',session=session)
 
+
 @app.route('/ligeruibg')      #老师查询已选的实验
 def ligeruibg():
     session=request.environ['beaker.session']
@@ -868,26 +925,77 @@ def ligeruibg():
 
 @app.route('/bg',method='POST')#返回html元素到当前打开的网页中，用于服务端显示
 def bg(db):
-   print "bbg"
-   cr=db.cursor()
-   cr.execute("SELECT studentid,studentname,coursename,experimentname,subexperimentname,date,startTime,xiakeTime,equipment FROM appointmentsheet ")
-   bg=cr.fetchall()
-   print bg
-   cr.close()
-   resul=list(bg)
-   resul_len=len(resul)
-   fkey=["studentid","studentname","coursename","experimentname","subexperimentname","date","startTime","xiakeTime","equipment"]
-   for i in range(resul_len):
+    print "bbg"
+    userid=request.POST.get("userid")
+    print userid
+    cr=db.cursor()
+    cr.execute("select coursename from course where teacherid=%s",userid)
+    trows=cr.fetchall()
+    resul=[]
+    for trow in trows:
+        coursename=trow
+        cr.execute("SELECT studentid,studentname,coursename,experimentname,subexperimentname,date,startTime,xiakeTime,equipment FROM appointmentsheet where coursename=%s",coursename)
+        bg=cr.fetchall()
+        flist_1=list(bg)
+        print flist_1
+        resul+=flist_1
+        print resul
+    resul_len=len(resul)
+    fkey=["studentid","studentname","coursename","experimentname","subexperimentname","date","startTime","xiakeTime","equipment"]
+    for i in range(resul_len):
         #print resul_len
         fvalue=list(resul[i])
         flist=zip(fkey,fvalue)
         fdict=dict(flist)
         resul[i]=fdict
-   resuldict={resul_len:resul} 
-   print resuldict
-   return resuldict  
+    resuldict={"resul_len":resul}
+    print resuldict
+    return resuldict  
 
+@app.route('/tscrinquery')      #老师查询学生的测试成绩
+def tscrinquery():
+    session=request.environ['beaker.session']
+    return template('tscrinquery_template',session=session)
 
+@app.post('/ceshiscore') #老师部分测试查询
+def ceshiscore(db):
+    print "ceshiscore"
+    userid=request.POST.get("userid")
+    print userid
+    position=request.POST.get("position")
+    print position
+    if position=="老师":
+        cr=db.cursor()
+        cr.execute("select coursename from course where teacherid=%s",userid) #可增加根据时间取最近的授课记录
+        rows=cr.fetchall()
+        print rows
+        #fdict={}
+        flist=[]
+        for row in rows:
+            print row
+            coursename=row
+            cr=db.cursor(MySQLdb.cursors.DictCursor)  #将记录的列名和值按键值对形式取出
+            cr.execute("select * from view_tscrinquery where coursename=%s",coursename)
+            row1=cr.fetchall()
+            print row1
+            flist_1=list(row1)
+            print flist_1
+            flist+=flist_1
+            print flist
+        resul={"scoredata":flist}
+    elif position=="学生":
+        cr=db.cursor()
+        cr=db.cursor(MySQLdb.cursors.DictCursor)  #将记录的列名和值按键值对形式取出
+        cr.execute("select * from view_tscrinquery where studentid=%s",userid)
+        rows=cr.fetchall()
+        print rows
+        flist=list(rows)
+        print flist
+        resul={"scoredata":flist}
+    else :
+        resul["meg"]="无权限查询"
+    print resul
+    return resul 
 
 @app.route('/tframepart2')
 def tframepart2():
@@ -943,6 +1051,40 @@ def yuyuechaxun():
     session = request.environ['beaker.session']
     print "yuyuechaxun"
     return template('yuyuechaxun_template',session=session)
+
+
+
+##老师可以查看当前可以预约的所授课程的所有时间段，但不能预约。
+@app.post('/tyuyue')
+def tyuyue(db):
+    userid=request.POST.get("userid")
+    cr=db.cursor()
+    cr.execute("select coursename from course where teacherid=%s",userid)
+    rows=cr.fetchall()
+    resul=[]
+    for row in rows:
+        coursename=row
+        cr.execute("SELECT distinct subexperimentname FROM setcourse WHERE coursename=%s and zt=1",coursename)
+        rowsdata=cr.fetchall()
+        courselist=list(rowsdata)
+        resul+=courselist
+        print resul
+    resul_len=len(resul)
+    urllist=[]
+    for i in range(resul_len):
+        subname=resul[i]
+        cr=db.cursor(MySQLdb.cursors.DictCursor)
+        cr.execute("select urladress.coursename,urladress.subexperimentname,urladress.yuyueurl from urladress where subexperimentname=%s",subname)
+        urldata=cr.fetchall()
+        urldatalist=list(urldata)
+        urllist+=urldatalist
+    print urllist
+    cr.close()
+    fdict={"urldata":urllist}
+    print fdict
+    return fdict
+    
+    
 
 
 #########预约部分数据#############
@@ -1370,6 +1512,8 @@ def testserver2(db): # fetch all the information from client according to the ch
 
 @app.post('/savecinfo') # save client info into client table
 def savecinfo(db):
+    teacherid = request.POST.get("userid")
+    print teacherid
     tp = request.POST.get("saveinfo")
     #print "1"
     tp=urllib.unquote(tp)
@@ -1377,51 +1521,71 @@ def savecinfo(db):
     tp=urlparse.parse_qsl(tp,1)
     #print "3"
     cinfo=dict(tp)
+    cinfo1 = {}
+    for i in cinfo.items():
+        cinfo1[i[0]] = i[1]
     print cinfo.items()
-    str1_split=cinfo["sxTime"].split(",")
-    str1=list(str1_split)
-    print str1_split
-    print str1
-    pattern=re.compile(r'^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])-(2[0-3]|[01]?[0-9]):([0-5]?[0-9])')
-    remsg={"msg":"ok"}
     cr=db.cursor()
-    for item in str1:
-        print item
-        match=pattern.match(item)
-        #print match
-        if match:
-            str2_split=match.group().split("-")
-            str2=list(str2_split)
-            print str2
-            cinfo["startTime"]=str2[0]
-            cinfo["xiakeTime"]=str2[1]
-            print cinfo
-            sql1="SELECT COUNT(*) FROM setcourse WHERE setcourse.coursename=%s AND setcourse.experimentname=%s AND setcourse.subexperimentname=%s AND setcourse.setTime=%s AND setcourse.endTime=%s AND setcourse.zt=%s AND setcourse.startTime=%s AND setcourse.xiakeTime=%s AND setcourse.maxnumber=%s AND setcourse.eqrule=%s"
-            cr.execute(sql1,(cinfo["coursename"],cinfo["experimentname"],cinfo["subexperimentname"],cinfo["setTime"],cinfo["endTime"],cinfo["zt"],cinfo["startTime"],cinfo["xiakeTime"],cinfo["maxnumber"],cinfo["eqrule"]))
-            row=cr.fetchone()
-            print row
-            fvalue=list()
-            print fvalue
-            for item in row:
-                fvalue.append(item)
-            fkey=["count"]
-            print fkey
-            flist=zip(fkey,fvalue)
-            print flist
-            fdict=dict(flist)
-            print fdict
-            if fdict["count"]==1:
-                remsg["msg"]="库中已存在该记录！"
-            elif fdict["count"]==0:
-                sql='''INSERT INTO setcourse(setcourse.coursename,setcourse.experimentname, setcourse.subexperimentname,setcourse.setTime,setcourse.endTime,setcourse.zt,setcourse.startTime,setcourse.xiakeTime,setcourse.maxnumber,setcourse.eqrule) values
-                    (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
-                try:
-                    cr.execute(sql,(cinfo["coursename"],cinfo["experimentname"],cinfo["subexperimentname"],cinfo["setTime"],cinfo["endTime"],cinfo["zt"],cinfo["startTime"],cinfo["xiakeTime"],cinfo["maxnumber"],cinfo["eqrule"]))            
-                except Exception,e:
-                    db.rollback()
-                    print "Error %d: %s" % (e.args[0],e.args[1])
-                    sys.exit(1)
-                remsg["msg"]="课程信息添加成功！"
+    cr.execute("select coursename from course where teacherid=%s",teacherid)
+    rows=cr.fetchall()
+    rows_list=list(rows)
+    print rows_list 
+    rows_list1 = []
+    for i in rows_list:
+        rows_list1.append(i[0])
+    print "rows_list1: ",rows_list1
+    #if cinfo["coursename"]  in rows_list1:
+    #    print "cursename in rows_list1"
+    cinfo1["coursename"] = unicode(cinfo1["coursename"], "utf-8")
+    if cinfo1["coursename"] not in rows_list1:
+        print cinfo["coursename"]
+        remsg={"msg":"请选择您所担任课程的实验内容！"}
+        return remsg
+    else :
+        str1_split=cinfo["sxTime"].split(",")
+        str1=list(str1_split)
+        print str1_split
+        print str1
+        pattern=re.compile(r'^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])-(2[0-3]|[01]?[0-9]):([0-5]?[0-9])')
+        remsg={"msg":"ok"}
+        for item in str1:
+            print item
+            match=pattern.match(item)
+            #print match
+            if match:
+                str2_split=match.group().split("-")
+                str2=list(str2_split)
+                print str2
+                cinfo["startTime"]=str2[0]
+                cinfo["xiakeTime"]=str2[1]
+                print cinfo
+                sql1="SELECT COUNT(*) FROM setcourse WHERE setcourse.coursename=%s AND setcourse.experimentname=%s AND setcourse.subexperimentname=%s AND setcourse.setTime=%s AND setcourse.endTime=%s AND setcourse.zt=%s AND setcourse.startTime=%s AND setcourse.xiakeTime=%s AND setcourse.maxnumber=%s AND setcourse.eqrule=%s"
+                cr.execute(sql1,(cinfo["coursename"],cinfo["experimentname"],cinfo["subexperimentname"],cinfo["setTime"],cinfo["endTime"],cinfo["zt"],cinfo["startTime"],cinfo["xiakeTime"],cinfo["maxnumber"],cinfo["eqrule"]))
+                row=cr.fetchone()
+                print row
+                fvalue=list()
+                print fvalue
+                for item in row:
+                    fvalue.append(item)
+                fkey=["count"]
+                print fkey
+                flist=zip(fkey,fvalue)
+                print flist
+                fdict=dict(flist)
+                print fdict
+                if fdict["count"]==1:
+                    remsg["msg"]="库中已存在该记录！"
+                elif fdict["count"]==0:
+                    sql='''INSERT INTO setcourse(setcourse.coursename,setcourse.experimentname, setcourse.subexperimentname,setcourse.setTime,setcourse.endTime,setcourse.zt,setcourse.startTime,setcourse.xiakeTime,setcourse.maxnumber,setcourse.eqrule) values
+                        (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+                    try:
+                        cr.execute(sql,(cinfo["coursename"],cinfo["experimentname"],cinfo["subexperimentname"],cinfo["setTime"],cinfo["endTime"],cinfo["zt"],cinfo["startTime"],cinfo["xiakeTime"],cinfo["maxnumber"],cinfo["eqrule"]))            
+                    except Exception,e:
+                        db.rollback()
+                        print "Error %d: %s" % (e.args[0],e.args[1])
+                        sys.exit(1)
+                    remsg["msg"]="课程信息添加成功！"
+
     cr.close()
 #    remsg["msg"]="课程信息添加成功！"
 #    cr=db.cursor()
@@ -1489,6 +1653,88 @@ def savecinfo(db):
 #        cr.close()
 #        remsg["msg"]="库中存在多条重复记录，无法更新！" 
     return remsg
+
+@app.post('/savemodcinfo')      #老师保存已修改的课程
+def savemodcinfo(db):
+    teacherid = request.POST.get("userid")
+    tpnew = request.POST.get("savenewinfo")  #修改后的数据
+    print "数据：",tpnew
+    tpnew=urllib.unquote(tpnew)
+    tpnew=urlparse.parse_qsl(tpnew,1)
+    cinfonew=dict(tpnew)
+    tpold= request.POST.get("saveoldinfo") #修改前的数据
+    tpold=urllib.unquote(tpold)
+    tpold=urlparse.parse_qsl(tpold,1)
+    cinfoold=dict(tpold)
+    cinfonew1 = {}
+    for i in cinfonew.items():
+        cinfonew1[i[0]] = i[1]
+    print "cinfonew1:",cinfonew1
+    print "cinfonew 数据：",cinfonew.items()
+    print cinfoold.items()
+    cr=db.cursor()
+    cr.execute("select coursename from course where teacherid=%s",teacherid)
+    rows_list=cr.fetchall()
+    print rows_list 
+    rows_list1 = []
+    for i in rows_list:
+        rows_list1.append(i[0])
+    print "rows_list1: ",rows_list1
+    print "cinfonew1['coursename']" ,cinfonew1["coursename"]
+    for k in rows_list1:
+        print k
+    cinfonew1["coursename"] = unicode(cinfonew1["coursename"], "utf-8")
+    if cinfonew1["coursename"] not in rows_list1:
+        remsg={"msg":"请选择您所担任课程的实验内容！"}
+        return remsg
+    else:
+        str1_split=cinfonew["sxTime"].split(",")
+        str1=list(str1_split)
+        print str1_split
+        print str1
+        pattern=re.compile(r'^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])-(2[0-3]|[01]?[0-9]):([0-5]?[0-9])')
+        remsg={"msg":"ok"}
+        cr=db.cursor()
+        for item in str1:
+            print item
+            match=pattern.match(item)
+            #print match
+            if match:
+                str2_split=match.group().split("-")
+                str2=list(str2_split)
+                print str2
+                cinfonew["startTime"]=str2[0]
+                cinfonew["xiakeTime"]=str2[1]
+                print cinfonew
+                sql1="SELECT COUNT(*) FROM setcourse WHERE setcourse.coursename=%s AND setcourse.experimentname=%s AND setcourse.subexperimentname=%s AND setcourse.setTime=%s AND setcourse.endTime=%s AND setcourse.zt=%s AND setcourse.startTime=%s AND setcourse.xiakeTime=%s AND setcourse.maxnumber=%s AND setcourse.eqrule=%s"
+                cr.execute(sql1,(cinfonew["coursename"],cinfonew["experimentname"],cinfonew["subexperimentname"],cinfonew["setTime"],cinfonew["endTime"],cinfonew["zt"],cinfonew["startTime"],cinfonew["xiakeTime"],cinfonew["maxnumber"],cinfonew["eqrule"]))
+                row=cr.fetchone()
+                print row
+                fvalue=list()
+                print fvalue
+                for item in row:
+                    fvalue.append(item)
+                fkey=["count"]
+                print fkey
+                flist=zip(fkey,fvalue)
+                print flist
+                fdict=dict(flist)
+                print fdict
+                if fdict["count"]==1:
+                    remsg["msg"]="库中已存在该记录！"
+                elif fdict["count"]==0:
+                    sql2='''UPDATE setcourse SET coursename=%s,experimentname=%s,subexperimentname=%s,setTime=%s,endTime=%s,zt=%s,startTime=%s,xiakeTime=%s,maxnumber=%s,eqrule=%s 
+                            WHERE setcourse.coursename=%s AND setcourse.experimentname=%s AND setcourse.subexperimentname=%s AND setcourse.setTime=%s AND setcourse.endTime=%s AND setcourse.zt=%s 
+                            AND setcourse.startTime=%s AND setcourse.xiakeTime=%s AND setcourse.maxnumber=%s AND setcourse.eqrule=%s'''
+                    try:
+                        cr.execute(sql2,(cinfonew["coursename"],cinfonew["experimentname"],cinfonew["subexperimentname"],cinfonew["setTime"],cinfonew["endTime"],cinfonew["zt"],cinfonew["startTime"],cinfonew["xiakeTime"],cinfonew["maxnumber"],cinfonew["eqrule"],cinfoold["coursename"],cinfoold["experimentname"],cinfoold["subexperimentname"],cinfoold["setTime"],cinfoold["endTime"],cinfoold["zt"],cinfoold["startTime"],cinfoold["xiakeTime"],cinfoold["maxnumber"],cinfoold["eqrule"]))            
+                    except Exception,e:
+                        db.rollback()
+                        print "Error %d: %s" % (e.args[0],e.args[1])
+                        sys.exit(1)
+                    remsg["msg"]="课程信息修改成功！"
+    cr.close() 
+    return remsg  
 
 @app.post('/testserver3')
 def testserver3(db):
@@ -1665,7 +1911,71 @@ def getzTree(db):
     fdict={"zTreedata1":resul}
     print fdict
     return fdict
-                
+
+#（老师）课程设置显示、修改和删除部分
+
+@app.post('/kechengxianshi')
+def kechengxianshi(db):
+    userid=request.POST.get("userid")
+    print userid
+    cr=db.cursor()
+    cr.execute("select coursename from course where teacherid=%s",userid)
+    rows=cr.fetchall()
+    print rows
+    resul=[]
+    for row in rows:
+        print row
+        coursename=row
+        #cr=db.cursor(MySQLdb.cursors.DictCursor)
+        cr.execute("select * from setcourse where coursename=%s",coursename)
+        row1=cr.fetchall()
+        print row1
+        flist_1=list(row1)
+        print flist_1
+        resul+=flist_1
+        print resul
+        ##########
+    resul_len=len(resul)
+    print resul_len
+    fkey=["coursename","experimentname","subexperimentname","setTime","endTime","zt","startTime","xiakeTime","maxnumber","eqrule","devicenum"]
+    for i in range(resul_len):
+        fvalue=list(resul[i])
+        flist=zip(fkey,fvalue)
+        fdict=dict(flist)
+        resul[i]=fdict
+    resuldict={resul_len:resul}
+    print resuldict
+    return resuldict
+
+@app.post('/kechengdelete')      #（老师）课程设置查询及修改的删除功能  
+def kechengdelete(db):
+    tp=request.POST.get('data') 
+    ddata=json.loads(tp)
+    print ddata
+    cr=db.cursor()
+    sql1='''delete from setcourse where coursename=%s and experimentname=%s and subexperimentname=%s and 
+    setTime=%s and endTime=%s and zt=%s and startTime=%s and xiakeTime=%s and maxnumber=%s and
+    eqrule=%s'''
+    for i in ddata:
+        coursename=i["coursename"]
+        #print coursename
+        experimentname=i["experimentname"]
+        subexperimentname=i["subexperimentname"]
+        setTime=i["setTime"]
+        endTime=i["endTime"]
+        zt=i["zt"]
+        startTime=i["startTime"]
+        xiakeTime=i["xiakeTime"]
+        maxnumber=i["maxnumber"]
+        eqrule=i["eqrule"]
+        cr.execute(sql1,(i["coursename"],i["experimentname"],i["subexperimentname"],i["setTime"],i["endTime"],i["zt"],i["startTime"],i["xiakeTime"],i["maxnumber"],i["eqrule"]))
+    output={"mesg":"成功删除数据"}
+    return output
+        
+    
+    
+           
+#######################################                
 @app.post('/shiyandata')
 def shiyandata(db):
     name=request.POST.get("name")

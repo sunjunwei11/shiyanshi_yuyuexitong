@@ -25,6 +25,10 @@
 			var tabItems = [];
 
 			$(function() {
+				%user = session.get("user")
+			    var userid='{{user["userid"]}}';
+					
+			
 				$("#layout1").ligerLayout({
 					leftWidth : 190,
 					height : '100%',
@@ -78,7 +82,35 @@
 				tab = liger.get("framecenter");
                 accordion = liger.get("accordion1");
                 //tree = liger.get("tree1");
-               
+                
+                //老师查询可预约的实验部分
+                $("#tree1").ligerTree({
+					data:createdata(userid),
+					checkbox : false,
+					slide:false,
+					nodeWidth:300,
+					attribute: ['nodename', 'url'],
+                    onSelect: function (node)
+                    {
+                        if (!node.data.url) return;
+                        var tabid = $(node.target).attr("tabid");
+                        if (!tabid)
+                        {
+                            tabid = new Date().getTime();
+                            $(node.target).attr("tabid", tabid)
+                        } 
+                        f_addTab(tabid,node.data.text, node.data.url);
+                    }
+					
+					
+					
+					
+					
+					
+					
+					
+				});
+                
                 pages_init();
                 
                
@@ -87,6 +119,47 @@
 		
 
 			})
+			
+			function createdata(e){	
+				var newdata={},leftdata=new Array();
+				var temp=new Array(),data1=[];
+				var chdata=[{url:"",text:"预约"}]	;
+				$.ajax({
+					url:"/tyuyue",
+					type:"POST",
+					dataType:"json",
+					async:false,
+					data:{userid:e},
+					success:function(data){
+						//alert("请求实验内容数据成功") 
+						//data2=data["shiyandata1"];
+						datalist=data["urldata"];
+						//alert(datalist)
+						//data4=datalist["coursename"];
+						//newdata=data3;
+						
+											
+					}
+				
+				})
+			
+			var screen_height = screen.height.toString();	
+			for(var i=0;i<datalist.length;i++){
+			
+				           
+							temp[i]={text:datalist[i]["subexperimentname"],isExpand:false,
+							children:[
+							{url:datalist[i]["yuyueurl"]+'?couname='+datalist[i]["coursename"]+'&subname='+datalist[i]["subexperimentname"],text:"预约"},
+							]};
+						    data1.push(temp[i]);
+
+					
+						}
+						
+		
+			return  data1;		
+			
+			};
 			
 			function opentab(id, arg) {
 				mytab.addTabItem({
@@ -189,7 +262,7 @@
 		<div id="pageloading"></div>
 		<div id="topmenu" class="l-topmenu" style="background-color:#82B1AD">
 			<img src="images/logo.png" width="66" height="66" style=" position:absolute;top:1px;left:50px;"/>
-			<span style="color:rgb(6,5,8); margin-left: 150px;width:94px;font-size:50px; font-style:italic">武汉理工大学专业与创新实验室</span>
+			<span style="color:rgb(6,5,8); margin-left: 150px;width:94px;font-size:50px; font-style:italic">武汉理工大学过程控制实验室</span>
 			<div>
 				<p align="right" style="margin-bottom:0;margin-top:6px">
 					% user=session.get('user')
@@ -213,21 +286,22 @@
 					
 				</div>
 				<div title="课程设置" class="l-scroll">
-					<a class="l-link" href="javascript:f_addTab('listpage','课程设置','/teachersettest')">课程设置</a>
+					<a class="l-link" href="javascript:f_addTab('setcourse','课程设置','/teachersettest')">课程设置</a>
+					<a class="l-link" href="javascript:f_addTab('courseinquery','课程设置查询及修改','/settestinquiry')">课程设置查询及修改</a>
 					
 				</div>
 				<div title="测试成绩查询" class="l-scroll">
-					
+				<a class="l-link" href="javascript:f_addTab('scrinquery','测试成绩查询','/tscrinquery')">测试成绩查询</a>	
 					
 				</div>
 				<div title="实验预约查询">
 					<a class="l-link" href="javascript:f_addTab('stuinquery','学生预约查询','/ligeruibg')">学生预约查询</a>
-				    <a class="l-link" href="javascript:f_addTab('expinquery','可预约实验查询','/yuyueyemian')">可预约实验查询</a>
-					
+				    <a class="l-link" >可预约实验查询</a>
+				   		<ul id="tree1" style="margin-top:3px;"></ul>
 					
 				</div>
 				<div title="实验报告">
-				<a class="l-link" href="javascript:f_addTab('listpage5','学生实验报告','/teacherbaogao')">学生实验报告</a>		
+					
 				</div>
 				<div title="聊天系统">
 				<a class="l-link" href="javascript:f_addTab('listpage2','聊天系统','/teacherui')">聊天系统</a>	
