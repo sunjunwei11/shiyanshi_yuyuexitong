@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>汉理工大学过程控制实验室</title>
+		<title>武汉理工大学过程控制实验室</title>
 		
 		<!--<script src="js/ligerUI/js/core/base.js" type="text/javascript"></script>-->
 		<link rel="stylesheet" type="text/css" href="js/ligerUI/skins/Aqua/css/ligerui-all.css">
@@ -214,8 +214,9 @@
 				<div title="实验设备信息录入" class="l-scroll">
 					
 				</div>
-				<div title="课程信息录入" class="l-scroll">
-					
+				<div title="测试题库管理" class="l-scroll">
+					<a class="l-link" href="javascript:f_addTab('testquestionseditor','测试题库编辑','testquestionseditor')">测试题库编辑</a>
+					<a class="l-link" href="javascript:f_addTab('testquestionsinquiry','测试题库查询','testquestionsinquiry')">测试题库查询</a>
 				</div>
 				<div title="综合查询" class="l-scroll">
 					

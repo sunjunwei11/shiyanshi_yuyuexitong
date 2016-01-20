@@ -53,7 +53,7 @@ members = []
 group1 = []
 group2 = []
 siliaouser = ''#用来存放请求私聊的用户名字
-
+ANWSER = []
 
 class User:
     def __init__(self,wsocket):
@@ -2207,8 +2207,19 @@ def testing():
     session = request.environ['beaker.session']
     return template('testing_template',session=session)
 
+@app.route('/testquestionseditor')
+def testquestionseditor():
+    session = request.environ['beaker.session']
+    return template('testquestionseditor_template',session=session)
+
+@app.route('/testquestionsinquiry')
+def testquestionsinquiry():
+    session = request.environ['beaker.session']
+    return template('testquestionsinquiry_template',session=session)
+
 @app.route('/testingquestions',method='POST')
 def testingquestions(db):
+    global ANWSER
     subname=request.POST.get("subname")
     print subname
     cr=db.cursor()
@@ -2223,6 +2234,7 @@ def testingquestions(db):
     for i in range(data_len):
         #print resul_len
         value=list(data[i])
+        ANWSER.append(value[5])
         datalist=zip(key,value)
         datadict=dict(datalist)
         data[i]=datadict
@@ -2231,6 +2243,65 @@ def testingquestions(db):
     #print datadic
     return resuldata
 
+@app.route('/questionsinquiry',method='POST')
+def questionsinquiry(db):
+    cr=db.cursor()
+    cr.execute("SELECT number,couse,experiment,question,optionA,optionB,optionC,optionD,anwser FROM testingquestions")
+    content=cr.fetchall()
+    print content
+    cr.close()
+    resul=list(content)
+    resul_len=len(resul)
+    fkey=["序号","课程名称","实验名称","测试题目","选项A","选项B","选项C","选项D","正确答案"]
+    for i in range(resul_len):
+        #print resul_len
+        fvalue=list(resul[i])
+        flist=zip(fkey,fvalue)
+        fdict=dict(flist)
+        resul[i]=fdict
+    resuldict={resul_len:resul} 
+    print resuldict
+    return resuldict
+    
+@app.route('/questiondelete',method='POST')
+def questiondelete(db):
+    print "12344"
+    #AAA={}#将post过来的数据封装成字典
+    #for i in request.forms:
+    #    AAA[i]=request.forms[i]
+    #print AAA["序号"]
+    number=request.POST.get('序号')
+    #experimentname = "已到"
+    cr=db.cursor()
+    cr.execute("DELETE FROM testingquestions WHERE number=%s",(number))
+    cr.close()
+    print(number);
+    return "ok"
+    
+
+
+@app.route('/questionseditor',method='POST')
+def questionseditor(db):
+    print "测试"
+    tp = request.POST.get('editor')
+    tp=urllib.unquote(tp)
+    tp=urlparse.parse_qsl(tp)
+    content=dict(tp)
+    print content
+    #state="已完成"
+    cr=db.cursor()
+    
+    sql='''INSERT INTO testingquestions(couse,experiment,question,optionA,optionB,optionC,optionD,anwser,modifytime) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,NOW())'''
+    try:
+        cr.execute(sql,(content["course"],content["experiment"],content["question"],content["A"],content["B"],content["C"],content["D"],content["anwser"]))
+        db.commit()
+        msg="题目已保存到数据库！"
+    except Exception,e:
+        msg="操作失败，题目未保存到数据库！"
+    
+    cr.close()
+    return {"msg":msg}
+    
 @app.post('/if_havedone')
 def if_havedone(db):
     session = request.environ['beaker.session']
@@ -2274,19 +2345,19 @@ def getscore(db):
     anwserlist.append(anwser["7"])
     anwserlist.append(anwser["8"])
     anwserlist.append(anwser["9"])
-    print anwserlist
-    correct=[]
-    #userid="88"
+    #print anwserlist
+    #correct=[]
+    global ANWSER
     cr=db.cursor()
-    cr.execute("SELECT anwser FROM testingquestions WHERE experiment=%(subname)s",{"subname":subname})
-    data=cr.fetchall()
-    correct1=list(data)
-    for i in correct1:
-        correct.append(list(i)[0])
+    #cr.execute("SELECT anwser FROM testingquestions WHERE experiment=%(subname)s",{"subname":subname})
+    #data=cr.fetchall()
+    #correct1=list(data)
+   # for i in correct1:
+     #   correct.append(list(i)[0])
     score=0
     for i in range(10):
-        if (anwserlist[i] == correct[i]): 
-            
+        #if (anwserlist[i] == correct[i]): 
+        if (anwserlist[i] == ANWSER[i]):   
             score=score+10
         else:
             

@@ -366,7 +366,7 @@
 							Get started or get further
 						</div>
 					</div> </a>
-					<a  href='/sframepart3' class="tile tileFlip horizontal group2 " style="
+					<a  href='http://10.141.68.60/upload/forum.php' class="tile tileFlip horizontal group2 " style="
 					margin-top:200px; margin-left:1550px;
 					width:145px; height:145px;"  data-pos='200-1550-145' >
 					<div class='flipContainer'>
