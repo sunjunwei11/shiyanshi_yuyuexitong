@@ -301,7 +301,7 @@
 					
 				</div>
 				<div title="实验报告">
-					
+				<a class="l-link" href="javascript:f_addTab('listpage5','学生实验报告','/teacherbaogao')">学生实验报告</a>		
 				</div>
 				<div title="聊天系统">
 				<a class="l-link" href="javascript:f_addTab('listpage2','聊天系统','/teacherui')">聊天系统</a>	
