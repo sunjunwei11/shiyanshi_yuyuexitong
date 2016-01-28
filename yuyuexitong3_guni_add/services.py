@@ -18,7 +18,7 @@ from plugins.bottle_frontdoor import FrontDoorPlugin
 from decimal import *
 import MySQLdb
 import base64 
-from cherrypy._cpwsgi import downgrade_wsgi_ux_to_1x
+#from cherrypy._cpwsgi import downgrade_wsgi_ux_to_1x
 app = bottle.default_app()
 
 #--------------------------------------------------------------------------------
@@ -1059,7 +1059,7 @@ def yuyuechaxun():
 def tyuyue(db):
     userid=request.POST.get("userid")
     cr=db.cursor()
-    cr.execute("select coursename from course where teacherid=%s",userid)
+    cr.execute("select coursename from course where teacherid=%(userid)s",{"userid":userid})
     rows=cr.fetchall()
     resul=[]
     for row in rows:
@@ -1526,7 +1526,7 @@ def savecinfo(db):
         cinfo1[i[0]] = i[1]
     print cinfo.items()
     cr=db.cursor()
-    cr.execute("select coursename from course where teacherid=%s",teacherid)
+    cr.execute('''select coursename from course where teacherid=%(teacher)s''',{"teacher":teacherid})
     rows=cr.fetchall()
     rows_list=list(rows)
     print rows_list 
@@ -1673,7 +1673,7 @@ def savemodcinfo(db):
     print "cinfonew 数据：",cinfonew.items()
     print cinfoold.items()
     cr=db.cursor()
-    cr.execute("select coursename from course where teacherid=%s",teacherid)
+    cr.execute("select coursename from course where teacherid=%(teacherid)s",{"teacherid":teacherid})
     rows_list=cr.fetchall()
     print rows_list 
     rows_list1 = []
@@ -1919,7 +1919,7 @@ def kechengxianshi(db):
     userid=request.POST.get("userid")
     print userid
     cr=db.cursor()
-    cr.execute("select coursename from course where teacherid=%s",userid)
+    cr.execute("select coursename from course where teacherid=%(userid)s",{"userid":userid})
     rows=cr.fetchall()
     print rows
     resul=[]
@@ -2420,3 +2420,6 @@ if __name__ == '__main__':
     Initialization(db)
     run(app, server=GeventWebSocketServer)     
     
+db = MySQLdb.connect("localhost", "root", "312312","labtest",charset="utf8")
+Initialization(db)
+application = app
