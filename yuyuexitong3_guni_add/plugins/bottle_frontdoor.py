@@ -59,13 +59,13 @@ class FrontDoorPlugin(object):
                         for col in row:
                             urlacess.append(menuurls.get(col))
                     session['menuacess']=urlacess
-                    print session['menuacess']
-                    print session['leftmenu']
+                    #print session['menuacess']
+                    #print session['leftmenu']
                 
                 
                 cururl=request.urlparts[2]
-                print cururl
-                print session
+                #print cururl
+                #print session
                 
                 allurl=session['menumap'].values() 
                 urlacess=session['menuacess']             

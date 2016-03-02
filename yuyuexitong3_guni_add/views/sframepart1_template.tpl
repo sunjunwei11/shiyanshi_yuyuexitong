@@ -205,8 +205,9 @@
 							children:[{url:newdata[i]["yuxiurl"]+'?couname='+data4+'&subname='+newdata[i]["subexperimentname"],text:"预习"},
 							{url:newdata[i]["ceshiurl"]+'?couname='+data4+'&subname='+newdata[i]["subexperimentname"],text:"测试"},
 							{url:newdata[i]["yuyueurl"]+'?couname='+data4+'&subname='+newdata[i]["subexperimentname"],text:"预约"},
+							% user=session.get('user')
 							//{url:newdata[i]["baogaourl"]+'?couname='+data4+'&subname='+newdata[i]["subexperimentname"],text:"实验报告"},
-							{url:"/demo.html",text:"实验报告"},
+							{url:'http://10.141.114.83:90/first_project/kindeditor-4.1.10/jsp/denglu.jsp?'+'studentname='+'{{user["username"]}}'+'&coursename='+newdata[i]["group_name"],text:"实验报告"},
 							{url:newdata[i]["liaotianurl"]+"/"+screen_height,text:newdata[i]["group_name"]+"讨论组"}]};
 							/*alert(newdata["text"])
 							newdata["isexpand"]=false;

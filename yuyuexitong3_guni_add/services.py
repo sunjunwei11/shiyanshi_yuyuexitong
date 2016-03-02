@@ -40,6 +40,7 @@ Users_init = dict()#用于群聊，是初始用户列表
 Usersid_group_inf=dict()
 Usersname_group_inf=dict()
 Usersgroup_shiyan_date=dict()#存放各小组的实验日期和时间
+shiyan_baogao=dict()
 Users_init2 = list()#用于单独的私聊窗口，是初始用户列表
 opposite = ''#用于存放私聊对象
 Users_private = list()#用于私聊
@@ -290,11 +291,11 @@ def teacherui(db):
 
 @app.route('/teacherbaogao')
 def teacherbaogao():
-    return template('tabs_daohanglan/demo/teacherbaogao.tpl')
+    return template('tabs_daohanglan/demo/teacherbaogao.tpl',shiyan_baogao=shiyan_baogao)
 
 @app.route('/groupchat',apply=[websocket])
 def groupchat(ws,db):
-    print "groupchat begin"
+    #print "groupchat begin"
     global Users_init
     global opposite
     cr=db.cursor()
@@ -2413,13 +2414,37 @@ def Initialization(db):
     print Usersid_group_inf
     print Usersname_group_inf
     print Usersgroup_shiyan_date
+    cr.execute("SELECT DISTINCT class FROM shiyanbaogao")
+    shiyan_class = cr.fetchall()
+    print "shiyan_class:",shiyan_class
+    for k in shiyan_class:
+        shiyan_baogao[k[0]] = []
+        cr.execute("SELECT DISTINCT studentname FROM shiyanbaogao WHERE class=%(class)s",{"class":k[0]})
+        shiyan_studentname = cr.fetchall()
+        for i in shiyan_studentname:
+            shiyan_baogao[k[0]].append(i[0])
+        print "shiyan_studentname:",shiyan_studentname
+        print "shiyan_baogao:",shiyan_baogao
+    
+    """cr.execute("SELECT studentid,studentname,class FROM studentsinf")
+    stuinf = cr.fetchall()
+    cr.execute("DELETE FROM shiyanbaogao WHERE (class!='自动化zy1101' AND class!='自动化zy1102') OR (ISNULL(class))")
+    db.commit()
+    for k in stuinf:
+        print k[0],k[1]
+        cr.execute("INSERT INTO shiyanbaogao VALUES (%s,%s,%s,'上水箱','开始写上水箱实验报告')",(k[0],k[1],k[2]))
+        cr.execute("INSERT INTO shiyanbaogao VALUES (%s,%s,%s,'单闭环','开始写单闭环实验报告')",(k[0],k[1],k[2]))
+        cr.execute("INSERT INTO shiyanbaogao VALUES (%s,%s,%s,'串级控制','开始写串级控制实验报告')",(k[0],k[1],k[2]))
+        cr.execute("INSERT INTO shiyanbaogao VALUES (%s,%s,%s,'史密斯','开始写史密斯实验报告')",(k[0],k[1],k[2]))
+    db.commit()"""
+    cr.close()
     
 
 if __name__ == '__main__':
     db = MySQLdb.connect("localhost", "root", "312312","labtest",charset="utf8")
     Initialization(db)
     run(app, server=GeventWebSocketServer)     
-    
+
 db = MySQLdb.connect("localhost", "root", "312312","labtest",charset="utf8")
 Initialization(db)
 application = app

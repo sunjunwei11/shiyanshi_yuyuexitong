@@ -32,6 +32,15 @@ body {font-size:12px;}
 	               width:-webkit-calc(100% - 260px);
 	               width: calc(100% - 260px);
 }
+.baogao_content {
+                   border-style:none double double double;
+                   position:absolute;
+				   top:70px;
+				   left:250px;
+				   width:-moz-calc(100% - 260px);
+	               width:-webkit-calc(100% - 260px);
+	               width: calc(100% - 260px);
+}
 .liantian_jiemian1 {
 	width:100%;
 	height:800px;
