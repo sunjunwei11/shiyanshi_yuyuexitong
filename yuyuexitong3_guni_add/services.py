@@ -2224,7 +2224,8 @@ def testingquestions(db):
     subname=request.POST.get("subname")
     print subname
     cr=db.cursor()
-    cr.execute("SELECT question,optionA,optionB,optionC,optionD FROM testingquestions WHERE experiment=%(subname)s",{"subname":subname})
+    #cr.execute("SELECT question,optionA,optionB,optionC,optionD FROM testingquestions WHERE experiment=%(subname)s",{"subname":subname})
+    cr.execute("SELECT question,optionA,optionB,optionC,optionD,anwser FROM testingquestions WHERE experiment=%(subname)s ORDER BY RAND() LIMIT 10",{"subname":subname})
     rows=cr.fetchall()
     cr.close()
     data=list(rows)
@@ -2416,15 +2417,15 @@ def Initialization(db):
     print Usersgroup_shiyan_date
     cr.execute("SELECT DISTINCT class FROM shiyanbaogao")
     shiyan_class = cr.fetchall()
-    print "shiyan_class:",shiyan_class
+    #print "shiyan_class:",shiyan_class
     for k in shiyan_class:
         shiyan_baogao[k[0]] = []
         cr.execute("SELECT DISTINCT studentname FROM shiyanbaogao WHERE class=%(class)s",{"class":k[0]})
         shiyan_studentname = cr.fetchall()
         for i in shiyan_studentname:
             shiyan_baogao[k[0]].append(i[0])
-        print "shiyan_studentname:",shiyan_studentname
-        print "shiyan_baogao:",shiyan_baogao
+        #print "shiyan_studentname:",shiyan_studentname
+        #print "shiyan_baogao:",shiyan_baogao
     
     """cr.execute("SELECT studentid,studentname,class FROM studentsinf")
     stuinf = cr.fetchall()
