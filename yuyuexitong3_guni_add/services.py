@@ -2221,6 +2221,7 @@ def testquestionsinquiry():
 @app.route('/testingquestions',method='POST')
 def testingquestions(db):
     global ANWSER
+    ANWSER = []
     subname=request.POST.get("subname")
     print subname
     cr=db.cursor()
@@ -2275,7 +2276,7 @@ def questiondelete(db):
     number=request.POST.get('序号')
     #experimentname = "已到"
     cr=db.cursor()
-    cr.execute("DELETE FROM testingquestions WHERE number=%s",(number))
+    cr.execute("DELETE FROM testingquestions WHERE number=%(number)s",{"number":number})
     cr.close()
     print(number);
     return "ok"
@@ -2429,14 +2430,14 @@ def Initialization(db):
     
     """cr.execute("SELECT studentid,studentname,class FROM studentsinf")
     stuinf = cr.fetchall()
-    cr.execute("DELETE FROM shiyanbaogao WHERE (class!='自动化zy1101' AND class!='自动化zy1102') OR (ISNULL(class))")
+    cr.execute("DELETE FROM shiyanbaogao WHERE (class!='自动化zy1201' AND class!='自动化zy1202') OR (ISNULL(class))")
     db.commit()
     for k in stuinf:
         print k[0],k[1]
-        cr.execute("INSERT INTO shiyanbaogao VALUES (%s,%s,%s,'上水箱','开始写上水箱实验报告')",(k[0],k[1],k[2]))
-        cr.execute("INSERT INTO shiyanbaogao VALUES (%s,%s,%s,'单闭环','开始写单闭环实验报告')",(k[0],k[1],k[2]))
-        cr.execute("INSERT INTO shiyanbaogao VALUES (%s,%s,%s,'串级控制','开始写串级控制实验报告')",(k[0],k[1],k[2]))
-        cr.execute("INSERT INTO shiyanbaogao VALUES (%s,%s,%s,'史密斯','开始写史密斯实验报告')",(k[0],k[1],k[2]))
+        cr.execute("INSERT INTO shiyanbaogao VALUES (%s,%s,%s,'上水箱','开始写上水箱实验报告','未评分')",(k[0],k[1],k[2]))
+        cr.execute("INSERT INTO shiyanbaogao VALUES (%s,%s,%s,'单闭环','开始写单闭环实验报告','未评分')",(k[0],k[1],k[2]))
+        cr.execute("INSERT INTO shiyanbaogao VALUES (%s,%s,%s,'串级控制','开始写串级控制实验报告','未评分')",(k[0],k[1],k[2]))
+        cr.execute("INSERT INTO shiyanbaogao VALUES (%s,%s,%s,'史密斯','开始写史密斯实验报告','未评分')",(k[0],k[1],k[2]))
     db.commit()"""
     cr.close()
     
