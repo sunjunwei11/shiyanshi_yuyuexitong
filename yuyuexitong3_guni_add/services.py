@@ -85,6 +85,10 @@ def src_files(name):
 def serv_images(name):
     return static_file(name,root = './html/source/images/')
 #------------------------------------------------------------------------------------
+@app.route('/Matrix/:path#.+#')#老师聊天界面所需的东西
+def Matrix(path):
+    return static_file(path,root='./Matrix/')
+
 @app.route('/tabs_daohanglan/:path#.+#')#老师聊天界面所需的东西
 def server_tabs_daohanglan(path):
     return static_file(path,root='./tabs_daohanglan/')
