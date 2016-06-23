@@ -1,3 +1,1 @@
-# just_for_test
-ceshi
-IT IS interesting.
+实验室预约系统，包括即时通讯系统 
